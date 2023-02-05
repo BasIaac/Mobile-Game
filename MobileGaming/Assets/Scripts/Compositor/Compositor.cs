@@ -24,6 +24,7 @@ public class Compositor : MonoBehaviour
     protected readonly Dictionary<Type, IService> m_services = new Dictionary<Type, IService>();
     protected readonly Dictionary<Type, List<FieldEntry>> m_dependencySlots = new Dictionary<Type, List<FieldEntry>>();
     protected event Action OnTickAction;
+    protected event Action OnUpdateAction;
 
     private bool ResolveDependencies()
     {
@@ -204,6 +205,21 @@ public class Compositor : MonoBehaviour
                         }
                     }
                 }
+                
+                OnUpdateAttribute[] updateAttributes = (OnUpdateAttribute[])Attribute.GetCustomAttributes(methodInfo, typeof(OnUpdateAttribute));
+                
+                if (updateAttributes.Length > 0)
+                {
+                    if (methodInfo.ReturnType == typeof(void))
+                    {
+                        OnUpdateAction += InvokeMethod;
+
+                        void InvokeMethod()
+                        {
+                            methodInfo.Invoke(service, null);
+                        }
+                    }
+                }
             }
         }
     }
@@ -211,6 +227,8 @@ public class Compositor : MonoBehaviour
     // Add Services Here
     private void CreateAndWireObjects()
     {
+        AddService<IInputService>(new InputService());
+        
         AddService<ISceneService>(new SceneService());
     }
 
@@ -237,13 +255,17 @@ public class Compositor : MonoBehaviour
 
     private void Update()
     {
-        Tick();
+        InvokeActions();
     }
 
-    private void Tick()
+    private void InvokeActions()
     {
+        OnUpdateAction?.Invoke();
+        
         currentTime += Time.deltaTime;
+        
         if (currentTime < 1 / ticksPerSecond) return;
+        
         currentTime = 0;
         OnTickAction?.Invoke();
     }
