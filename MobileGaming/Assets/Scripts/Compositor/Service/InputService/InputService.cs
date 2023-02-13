@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using Attributes;
 using Service;
 using UnityEngine;
@@ -30,10 +29,15 @@ public class InputService : IInputService
     private void Press(InputAction.CallbackContext ctx)
     {
         Debug.Log($"Pressed at : {cursorPosition}");
+        OnPress?.Invoke(cursorPosition);
     }
 
     private void Release(InputAction.CallbackContext ctx)
     {
         Debug.Log($"Released at {cursorPosition}");
+        OnRelease?.Invoke(cursorPosition);
     }
+
+    public static event Action<Vector2> OnPress;
+    public static event Action<Vector2> OnRelease;
 }
