@@ -9,8 +9,11 @@ public class InputService : IInputService
     public PlayerControls controls { get; private set; }
     private InputAction positonAction;
     private InputAction deltaAction;
-    public Vector2 cursorPosition => positonAction.ReadValue<Vector2>();
-    public Vector2 deltaPosition => deltaAction.ReadValue<Vector2>();
+    private InputAction moveAction;
+
+    public static Vector2 movement;
+    public static Vector2 cursorPosition;
+    public static Vector2 deltaPosition;
     
     [ServiceInit]
     private void InitControls()
@@ -19,23 +22,33 @@ public class InputService : IInputService
 
         positonAction = controls.TouchActions.Positon;
         deltaAction = controls.TouchActions.DeltaPosition;
+        moveAction = controls.Movement.Move;
         
         controls.TouchActions.Press.performed += Press;
-        controls.TouchActions.Press.canceled += Release;
+        controls.TouchActions.Release.performed += Release;
         
         controls.Enable();
     }
     
     private void Press(InputAction.CallbackContext ctx)
     {
-        Debug.Log($"Pressed at : {cursorPosition}");
+        cursorPosition = positonAction.ReadValue<Vector2>();
+        
         OnPress?.Invoke(cursorPosition);
     }
 
     private void Release(InputAction.CallbackContext ctx)
     {
-        Debug.Log($"Released at {cursorPosition}");
+        cursorPosition = positonAction.ReadValue<Vector2>();
         OnRelease?.Invoke(cursorPosition);
+    }
+
+    [OnUpdate]
+    private void UpdateInputs()
+    {
+        movement = moveAction.ReadValue<Vector2>();
+        cursorPosition = positonAction.ReadValue<Vector2>();
+        deltaPosition = deltaAction.ReadValue<Vector2>();
     }
 
     public static event Action<Vector2> OnPress;

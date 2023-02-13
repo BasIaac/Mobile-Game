@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -5,16 +6,26 @@ public class SorcererController : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private GameObject sorcererGo;
-    [SerializeField] private Camera cam;
+    [SerializeField] private Camera orthoCam;
+    [SerializeField] private Camera perspCam;
+    private Camera cam => useOrthoCam ? orthoCam : perspCam;
+
+    [Header("Joystick")]
+    [SerializeField] private RectTransform joystickParentTr;
+    [SerializeField] private RectTransform joystickTr;
+    private GameObject joystickParentGo;
     
     [Header("Settings")]
+    [SerializeField] private bool useOrthoCam = true;
     [SerializeField] private bool isNavMeshControlled = true;
     [SerializeField] private LayerMask layersToHit;
     [SerializeField] private float rayLenght;
+    [SerializeField] private float speed = 10f;
     
     private NavMeshAgent agent;
     private Rigidbody rb;
 
+    private bool isPressed;
     private Ray ray;
     private RaycastHit hit;
     
@@ -26,37 +37,73 @@ public class SorcererController : MonoBehaviour
        InputService.OnRelease += OnScreenRelease;
     }
 
+    private void Update()
+    {
+        AgentMovement();
+    }
+
+    private void AgentMovement()
+    {
+        if(!isNavMeshControlled) return;
+        if(isPressed) MoveToPosition(InputService.cursorPosition);
+    }
+
+    private void FixedUpdate()
+    {
+        JoystickMovement();
+    }
+
     private void SetVariables()
     {
+        isPressed = false;
         agent = sorcererGo.GetComponent<NavMeshAgent>();
         rb = sorcererGo.GetComponent<Rigidbody>();
+        joystickParentGo = joystickParentTr.gameObject;
+        joystickParentGo.SetActive(false);
+    }
+
+    private void JoystickMovement()
+    {
+        if(isNavMeshControlled) return;
+        Vector3 movement = InputService.movement;
+        (movement.y, movement.z) = (movement.z, movement.y);
+        rb.velocity = movement * (speed * Time.deltaTime);
     }
 
     private void OnScreenTouch(Vector2 position)
     {
-        if (isNavMeshControlled)
-        {
-            MoveToPosition(position);
-            return;
-        }
+        isPressed = true;
+        if(isNavMeshControlled) return;
+        DisplayJoystick();
+    }
+
+    private void DisplayJoystick()
+    {
+        joystickParentTr.position = InputService.cursorPosition;
+        joystickTr.localPosition = Vector3.zero;
+        joystickParentGo.SetActive(true);
     }
 
     private void OnScreenRelease(Vector2 position)
     {
+        isPressed = false;
+        ResetJoystick();
         Interact();
+    }
+
+    private void ResetJoystick()
+    {
+        joystickParentGo.SetActive(false);
+        joystickTr.localPosition = Vector3.zero;
     }
 
     private void MoveToPosition(Vector2 screenPosition)
     {
         ray = cam.ScreenPointToRay(screenPosition);
-        Debug.DrawRay(ray.origin,ray.direction*rayLenght,Color.green,1f);
         if (Physics.Raycast(ray.origin,ray.direction, out hit,rayLenght,layersToHit))
         {
             agent.isStopped = false;
             agent.SetDestination(hit.point);
-            
-            Debug.Log("Hit");
-            Debug.DrawLine(ray.origin,hit.point,Color.yellow);
         }
     }
 

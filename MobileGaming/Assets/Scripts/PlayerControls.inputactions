@@ -20,8 +20,17 @@
                     "id": "301dd547-98c5-4c2a-a8da-2cf664b6275e",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
+                    "interactions": "Press(pressPoint=0.5)",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Release",
+                    "type": "Button",
+                    "id": "3cc30194-f36e-4bab-a2d0-717b68850330",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(pressPoint=1.401298E-45,behavior=1)",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "DeltaPosition",
@@ -49,7 +58,7 @@
                     "name": "",
                     "id": "3c75003e-28c7-451d-b0d2-a3bfd7a14623",
                     "path": "<Touchscreen>/Press",
-                    "interactions": "Press",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Press",
@@ -64,6 +73,45 @@
                     "processors": "",
                     "groups": "",
                     "action": "DeltaPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "30b004ce-863b-41b1-86ea-208db4e48a96",
+                    "path": "<Touchscreen>/Press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Release",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Movement",
+            "id": "2722c09e-88ad-4428-a3dc-240b6875b51c",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "0b01ae01-6117-45f5-8d4a-f34d4feaf18a",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a0ffbcd2-eef0-4d67-841b-38a7c1b80057",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
