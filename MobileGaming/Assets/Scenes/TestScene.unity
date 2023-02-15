@@ -549,7 +549,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d99aba2eaad767499c087d19371e1bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sorcerer: {fileID: 0}
   timeToProduce: 2
   timeMultiplier: 1
 --- !u!1 &1392171083
