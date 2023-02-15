@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: e94cdad448d1a074a92dc319bba8b6bf
+  m_SerializeEntries:
+  - m_GUID: bb09628e413c7834b97557280deec824
+    m_Address: SorcererController
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 75be7e7a49667104daed85ede29d628b
+    m_Address: JoystickCanvas
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a69a6633b6cba4d4ba7d15a75c74ed17
+    m_Address: Cameras
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: c1e8b032519a33d409f69f482ae698e3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: fbfdebc5236a54548b7bd21429f7c704, type: 2}
+    - {fileID: 11400000, guid: af2a7831f3773944d8f7be35b8ea2b62, type: 2}

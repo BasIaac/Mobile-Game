@@ -6,22 +6,27 @@ public class SorcererController : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private GameObject sorcererGo;
-    [SerializeField] private Camera orthoCam;
-    [SerializeField] private Camera perspCam;
-    private Camera cam => useOrthoCam ? orthoCam : perspCam;
+
+    public GameObject perspCameraGo;
+    public Camera orthoCam;
+    public Camera perspCam;
+    private Camera cam => !perspCameraGo.activeSelf ? orthoCam : perspCam;
 
     [Header("Joystick")]
-    [SerializeField] private RectTransform joystickParentTr;
-    [SerializeField] private RectTransform joystickTr;
-    private GameObject joystickParentGo;
+    public RectTransform joystickParentTr;
+    public RectTransform joystickTr;
+    public GameObject joystickParentGo;
     
     [Header("Settings")]
-    [SerializeField] private bool useOrthoCam = true;
     [SerializeField] private bool isNavMeshControlled = true;
     [SerializeField] private LayerMask layersToHit;
     [SerializeField] private float rayLenght;
     [SerializeField] private float speed = 10f;
-    
+
+    [Header("Interactible")]
+    [SerializeField] private Product currentProduct;
+    [SerializeField] private IInteractible currentInteractible;
+
     private NavMeshAgent agent;
     private Rigidbody rb;
 
@@ -31,8 +36,6 @@ public class SorcererController : MonoBehaviour
     
     private void Start()
     {
-       SetVariables();
-
        InputService.OnPress += OnScreenTouch;
        InputService.OnRelease += OnScreenRelease;
     }
@@ -53,13 +56,15 @@ public class SorcererController : MonoBehaviour
         JoystickMovement();
     }
 
-    private void SetVariables()
+    public void SetVariables()
     {
         isPressed = false;
         agent = sorcererGo.GetComponent<NavMeshAgent>();
         rb = sorcererGo.GetComponent<Rigidbody>();
         joystickParentGo = joystickParentTr.gameObject;
         joystickParentGo.SetActive(false);
+
+        currentInteractible = null;
     }
 
     private void JoystickMovement()
@@ -110,6 +115,12 @@ public class SorcererController : MonoBehaviour
     private void Interact()
     {
         if(isNavMeshControlled) StopAgent();
+        currentInteractible?.Interact(currentProduct);
+    }
+
+    public void SetInteractible(IInteractible interactible)
+    {
+        currentInteractible = interactible;
     }
 
     private void StopAgent()

@@ -1,4 +1,4 @@
-namespace Service.SceneService
+namespace Service
 {
     public interface ISceneService : ISwitchableService
     {
