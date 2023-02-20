@@ -39,7 +39,7 @@ namespace Service
             MachineSlot.OnRangeEnter += OnInteractableEnter;
             MachineSlot.OnRangeExit += OnInteractableExit;
             
-            currentProduct = new Product();
+            currentProduct = new Product(new ProductData());
         }
 
         private void LoadCameras(GameObject camerasGo)
