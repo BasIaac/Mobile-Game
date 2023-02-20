@@ -9,18 +9,14 @@ public class ClientSlot : Interactable
     
     public override void Interact(Product inProduct, out Product outProduct)
     {
-        Debug.Log("CLIENT");
-        
         outProduct = inProduct;
+        
         if (inProduct is null)
         {
             outProduct = client.GiveBaseProduct();
             return;
         }
 
-        if (inProduct.data != client.expectedProduct) return;
-        
-        outProduct = null;
-        client.StopClient();
+        outProduct = client.ReceiveProduct(inProduct);
     }
 }

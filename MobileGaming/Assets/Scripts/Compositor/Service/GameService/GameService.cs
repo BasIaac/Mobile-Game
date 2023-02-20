@@ -14,9 +14,6 @@ namespace Service
         private SorcererController sorcererController;
         private MachineManager machineManager;
         
-        
-        // TODO - Machine Manager that handles that
-        
         private Product currentProduct; // TODO - multiple products (product slot class list)
         
         private Interactable currentInteractable;
@@ -39,8 +36,6 @@ namespace Service
             Interactable.ResetEvents();
             Interactable.OnRangeEnter += OnInteractableEnter;
             Interactable.OnRangeExit += OnInteractableExit;
-            
-            currentProduct = new Product(new ProductData());
         }
 
         private void LoadCameras(GameObject camerasGo)
@@ -85,9 +80,9 @@ namespace Service
         {
             if(currentInteractable is null) return;
             
-            Debug.Log($"Interacting, product is {currentProduct?.name}");
+            Debug.Log($"Interacting, product is {currentProduct}");
             currentInteractable.Interact(currentProduct,out currentProduct);
-            Debug.Log($"Interacted, product is now {currentProduct?.name}");
+            Debug.Log($"Interacted, product is now {currentProduct}");
         }
 
         private void OnInteractableEnter(Interactable interactable)

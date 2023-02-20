@@ -47,7 +47,7 @@ public abstract class Machine : MonoBehaviour
 
     private void EndWork()
     {
-        UpdateFeedbackText("Work Done");
+        UpdateFeedbackText($"{currentProduct}");
         
         workRoutine = null;
     }
