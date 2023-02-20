@@ -19,7 +19,7 @@ namespace Service
         
         private Product currentProduct; // TODO - multiple products (product slot class list)
         
-        private IInteractable currentInteractable;
+        private Interactable currentInteractable;
 
         [ServiceInit]
         public void InitGame()
@@ -36,8 +36,9 @@ namespace Service
         {
             machineManager.InitMachines();
 
-            MachineSlot.OnRangeEnter += OnInteractableEnter;
-            MachineSlot.OnRangeExit += OnInteractableExit;
+            Interactable.ResetEvents();
+            Interactable.OnRangeEnter += OnInteractableEnter;
+            Interactable.OnRangeExit += OnInteractableExit;
             
             currentProduct = new Product(new ProductData());
         }
@@ -89,12 +90,12 @@ namespace Service
             Debug.Log($"Interacted, product is now {currentProduct?.name}");
         }
 
-        private void OnInteractableEnter(IInteractable interactable)
+        private void OnInteractableEnter(Interactable interactable)
         {
             currentInteractable = interactable;
         }
         
-        private void OnInteractableExit(IInteractable interactable)
+        private void OnInteractableExit(Interactable interactable)
         {
             if (currentInteractable == interactable) currentInteractable = null;
         }

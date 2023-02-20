@@ -33,7 +33,6 @@ public class InputService : IInputService
     private void Press(InputAction.CallbackContext ctx)
     {
         cursorPosition = positonAction.ReadValue<Vector2>();
-        
         OnPress?.Invoke(cursorPosition);
     }
 

@@ -1,18 +1,18 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class MachineCollider : MonoBehaviour
+public class InteractableCollider : MonoBehaviour
 {
     [Header("Settings")]
-    [SerializeField] private MachineSlot machineSlot;
+    [SerializeReference] private Interactable interactable;
 
     private void OnTriggerEnter(Collider other)
     {
-        machineSlot.EnterRange();
+        interactable.EnterRange();
     }
 
     private void OnTriggerExit(Collider other)
     {
-        machineSlot.ExitRange();
+        interactable.ExitRange();
     }
 }

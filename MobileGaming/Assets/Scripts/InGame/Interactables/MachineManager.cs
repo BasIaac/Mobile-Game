@@ -8,8 +8,6 @@ public class MachineManager : MonoBehaviour
 
     public void InitMachines()
     {
-        MachineSlot.InitSlots();
-        
         machines.Clear();
         foreach (var slot in slots)
         {

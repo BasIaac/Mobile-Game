@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 422d7cb8c800f654e87871dbb476fda0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineSlot: {fileID: 5443814242498105380}
+  interactable: {fileID: 5443814242498105380}
 --- !u!1 &5443814244501577178
 GameObject:
   m_ObjectHideFlags: 0

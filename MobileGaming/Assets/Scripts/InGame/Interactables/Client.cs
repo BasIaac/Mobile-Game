@@ -1,29 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class Client : MonoBehaviour, IInteractable
+public class Client : MonoBehaviour
 {
+    [Header("Feedback")]
+    [SerializeField] private TextMeshProUGUI feedbackText;
+    
+    [Header("Settings")]
     public ProductData expectedProduct;
     
     private bool hasGivenBaseProduct;
-    
-    public void Interact(Product inProduct, out Product outProduct)
+
+    public void TakeProduct()
     {
-        outProduct = inProduct;
-        if (inProduct is null)
-        {
-            outProduct = GiveBaseProduct();
-            return;
-        }
-
-        if (inProduct.data != expectedProduct) return;
         
-        outProduct = null;
-        StopClient();
     }
-
-    private Product GiveBaseProduct()
+    
+    public Product GiveBaseProduct()
     {
         var baseData = new ProductData()
         {
@@ -35,7 +30,7 @@ public class Client : MonoBehaviour, IInteractable
         return hasGivenBaseProduct ? null : new Product(baseData);
     }
 
-    private void StopClient()
+    public void StopClient()
     {
         
     }

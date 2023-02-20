@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class MachineSlot : MonoBehaviour, IInteractable
+public class MachineSlot : Interactable
 {
     [field:SerializeField] public Machine machine { get; private set; }
     
@@ -10,7 +10,7 @@ public class MachineSlot : MonoBehaviour, IInteractable
         machine = newMachine;
     }
 
-    public void Interact(Product inProduct,out Product outProduct)
+    public override void Interact(Product inProduct,out Product outProduct)
     {
         outProduct = null;
         if (inProduct is null)
@@ -22,22 +22,4 @@ public class MachineSlot : MonoBehaviour, IInteractable
         machine.LoadProduct(inProduct);
     }
 
-    public void EnterRange()
-    {
-        OnRangeEnter?.Invoke(this);
-    }
-
-    public void ExitRange()
-    {
-        OnRangeExit?.Invoke(this);
-    }
-
-    public static void InitSlots()
-    {
-        OnRangeEnter = null;
-        OnRangeExit = null;
-    }
-
-    public static event Action<IInteractable> OnRangeEnter;
-    public static event Action<IInteractable> OnRangeExit;
 }
