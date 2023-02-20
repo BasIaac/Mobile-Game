@@ -52,12 +52,12 @@ MonoBehaviour:
   joystickParentTr: {fileID: 0}
   joystickTr: {fileID: 0}
   joystickParentGo: {fileID: 0}
-  isNavMeshControlled: 0
+  isNavMeshControlled: 1
   layersToHit:
     serializedVersion: 2
     m_Bits: 256
-  rayLenght: 50
-  speed: 100
+  rayLenght: 75
+  speed: 200
 --- !u!1 &5238849128981398589
 GameObject:
   m_ObjectHideFlags: 0

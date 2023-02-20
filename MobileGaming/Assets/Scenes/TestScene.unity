@@ -652,7 +652,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   feedbackText: {fileID: 3400920022027173738}
   expectedData:
-    Color: 0
+    Color: 1
     Shape: 0
     Size: 3
 --- !u!1 &1705835273
