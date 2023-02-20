@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Product //Maybe just a struct
 {
-    
+    public string name = "new Product";
 }

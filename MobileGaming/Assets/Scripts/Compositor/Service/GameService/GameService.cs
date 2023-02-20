@@ -84,9 +84,9 @@ namespace Service
         {
             if(currentInteractable is null) return;
             
-            Debug.Log($"Interacting, product is {currentProduct}");
+            Debug.Log($"Interacting, product is {currentProduct?.name}");
             currentInteractable.Interact(currentProduct,out currentProduct);
-            Debug.Log($"Interacted, product is now {currentProduct}");
+            Debug.Log($"Interacted, product is now {currentProduct?.name}");
         }
 
         private void OnInteractableEnter(IInteractable interactable)
