@@ -4,15 +4,15 @@ using UnityEngine;
 public class MachineCollider : MonoBehaviour
 {
     [Header("Settings")]
-    [SerializeField] private Machine machine;
+    [SerializeField] private MachineSlot machineSlot;
 
     private void OnTriggerEnter(Collider other)
     {
-        machine.SetInteractible();
+        machineSlot.EnterRange();
     }
 
     private void OnTriggerExit(Collider other)
     {
-        machine.UnSetInteractible();
+        machineSlot.ExitRange();
     }
 }

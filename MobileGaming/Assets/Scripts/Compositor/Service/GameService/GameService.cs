@@ -12,10 +12,14 @@ namespace Service
         [DependsOnService] private IInputService inputService;
 
         private SorcererController sorcererController;
+        private MachineManager machineManager;
+        
+        
         // TODO - Machine Manager that handles that
         
-        private Product currentProduct;
-        private IInteractible currentInteractible;
+        private Product currentProduct; // TODO - multiple products (product slot class list)
+        
+        private IInteractable currentInteractable;
 
         [ServiceInit]
         public void InitGame()
@@ -26,6 +30,16 @@ namespace Service
         private void LoadAssets()
         {
             AddressableHelper.LoadAssetAsyncWithCompletionHandler<GameObject>("Cameras", LoadCameras);
+        }
+
+        private void LoadGame()
+        {
+            machineManager.InitMachines();
+
+            MachineSlot.OnRangeEnter += OnInteractableEnter;
+            MachineSlot.OnRangeExit += OnInteractableExit;
+            
+            currentProduct = new Product(new ProductData());
         }
 
         private void LoadCameras(GameObject camerasGo)
@@ -57,9 +71,32 @@ namespace Service
                     
                     sorcererController.SetVariables();
 
-                    Machine.sorcerer = sorcererController;
+                    sorcererController.OnInteract += InteractWithInteractable;
+
+                    machineManager = Object.FindObjectOfType<MachineManager>(); // TODO - load it before, with the level layout
+                    
+                    LoadGame();
                 }
             }
+        }
+
+        private void InteractWithInteractable()
+        {
+            if(currentInteractable is null) return;
+            
+            Debug.Log($"Interacting, product is {currentProduct?.name}");
+            currentInteractable.Interact(currentProduct,out currentProduct);
+            Debug.Log($"Interacted, product is now {currentProduct?.name}");
+        }
+
+        private void OnInteractableEnter(IInteractable interactable)
+        {
+            currentInteractable = interactable;
+        }
+        
+        private void OnInteractableExit(IInteractable interactable)
+        {
+            if (currentInteractable == interactable) currentInteractable = null;
         }
     }
 }
