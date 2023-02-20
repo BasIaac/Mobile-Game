@@ -52,7 +52,6 @@ MonoBehaviour:
   joystickParentTr: {fileID: 0}
   joystickTr: {fileID: 0}
   joystickParentGo: {fileID: 0}
-  useOrthoCam: 1
   isNavMeshControlled: 0
   layersToHit:
     serializedVersion: 2
