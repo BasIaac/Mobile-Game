@@ -22,11 +22,7 @@ public class SorcererController : MonoBehaviour
     [SerializeField] private LayerMask layersToHit;
     [SerializeField] private float rayLenght;
     [SerializeField] private float speed = 10f;
-
-    [Header("Interactible")]
-    [SerializeField] private Product currentProduct;
-    [SerializeField] private IInteractible currentInteractible;
-
+    
     private NavMeshAgent agent;
     private Rigidbody rb;
 
@@ -64,7 +60,7 @@ public class SorcererController : MonoBehaviour
         joystickParentGo = joystickParentTr.gameObject;
         joystickParentGo.SetActive(false);
 
-        currentInteractible = null;
+        OnInteract = null;
     }
 
     private void JoystickMovement()
@@ -115,14 +111,11 @@ public class SorcererController : MonoBehaviour
     private void Interact()
     {
         if(isNavMeshControlled) StopAgent();
-        currentInteractible?.Interact(currentProduct);
+        OnInteract?.Invoke();
     }
 
-    public void SetInteractible(IInteractible interactible)
-    {
-        currentInteractible = interactible;
-    }
-
+    public event Action OnInteract;  
+    
     private void StopAgent()
     {
         agent.ResetPath();
