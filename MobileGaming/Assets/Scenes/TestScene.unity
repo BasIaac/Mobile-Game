@@ -266,6 +266,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3400920022527669873, guid: 352b44090acad854589592677c5b934f,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 94c7858212b246044bb7705545e62551, type: 2}
     - target: {fileID: 3400920022527669875, guid: 352b44090acad854589592677c5b934f,
         type: 3}
       propertyPath: m_RootOrder
@@ -593,6 +598,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Machine Slot (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5443814244501577176, guid: 29f910fafaa0d134380aa1fdbc2752f8,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91207afab473844458f8777c3f296d33, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 29f910fafaa0d134380aa1fdbc2752f8, type: 3}
 --- !u!1 &1392171083
@@ -641,6 +651,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   feedbackText: {fileID: 3400920022027173738}
+  expectedData:
+    Color: 0
+    Shape: 0
+    Size: 3
 --- !u!1 &1705835273
 GameObject:
   m_ObjectHideFlags: 0
@@ -938,7 +952,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 53e191a55de2ea14f9d174bbf3832e78, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1126,6 +1140,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3400920022527669873, guid: 352b44090acad854589592677c5b934f,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 94c7858212b246044bb7705545e62551, type: 2}
     - target: {fileID: 3400920022527669875, guid: 352b44090acad854589592677c5b934f,
         type: 3}
       propertyPath: m_RootOrder
@@ -1319,6 +1338,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Machine Slot
       objectReference: {fileID: 0}
+    - target: {fileID: 5443814244501577176, guid: 29f910fafaa0d134380aa1fdbc2752f8,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91207afab473844458f8777c3f296d33, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 29f910fafaa0d134380aa1fdbc2752f8, type: 3}
 --- !u!1 &5443814243285852857
@@ -1421,7 +1445,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 80a02ebd098d2934a91ea563f73846a4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
