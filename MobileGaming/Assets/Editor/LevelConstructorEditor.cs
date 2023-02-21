@@ -13,6 +13,5 @@ class LevelConstructorEditor : Editor
         if (GUILayout.Button("Bake")) { levelInitializer.Bake(); }
         EditorGUILayout.Space(5);
         if (GUILayout.Button("Clear")) { levelInitializer.ClearGrid(); }
-        
     }
 }

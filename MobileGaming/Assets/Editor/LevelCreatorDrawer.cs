@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomPropertyDrawer(typeof(level))]
-public class LevelCreatorEditor : PropertyDrawer
+public class LevelCreatorDrawer : PropertyDrawer
 {
    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
    {
@@ -32,6 +32,6 @@ public class LevelCreatorEditor : PropertyDrawer
 
    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
    {
-      return 18f * 18f;
+      return 18f * 22f;
    }
 }
