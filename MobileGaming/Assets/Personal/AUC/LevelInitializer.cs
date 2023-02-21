@@ -1,59 +1,37 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class LevelInitializer : MonoBehaviour
 {
-    public static LevelInitializer instance;
-    
     public string levelStringKey;
     private char c;
     private int blockIndex;
 
-    [Header("Params")] public int levelSize;
+    [Header("Params")] 
     
-    [Space(20)]
-    [SerializeField] private BlockData[] blockData;
-
-    [ContextMenu("Setup")]
-    private void Awake()
-    {
-        instance = this;
-        Bake();
-    }
+    public Vector2Int levelSize;
+    [Space(10)] [SerializeField] private BlockData[] blockData;
     
     public void Bake()
     {
         ClearGrid();
         
-        for (int x = 0; x < levelSize; x++)
+        for (int x = 0; x < levelSize.x; x++)
         {
-            for (int y = 0; y < levelSize; y++)
+            for (var y = 0; y < levelSize.y; y++)
             {
-                var currentPos = new Vector2(x, y);
-                if (levelStringKey[blockIndex] != '\n')
-                {
-                    c = levelStringKey[blockIndex]; 
-                    Debug.Log(c);
-                    GameObject GO = Instantiate(SetBlockByChar(c), new Vector3(currentPos.x, 0, currentPos.y), Quaternion.identity, transform);
-                    blockIndex++;
-                }
-                else
-                {
-                    Debug.Log("Fini avec " + blockIndex  + " éléments posés");
-                }
+                c = levelStringKey[blockIndex]; 
+                Debug.Log(c);
+                GameObject GO = Instantiate(SetBlockByChar(c), new Vector3(x, 0, y), Quaternion.identity, transform);
+                blockIndex++;
             }
         }
     }
 
     private GameObject SetBlockByChar(char c)
     {
-        foreach (var data in blockData)
-        {
-            if(data.c != c) continue;
-            return data.caseObject;
-        }
-
-        return null;
+        return (from data in blockData where data.c == c select data.caseObject).FirstOrDefault();
     }
 
     public void ClearGrid()
