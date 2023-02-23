@@ -11,7 +11,7 @@ public class LevelInitializer : MonoBehaviour
     [Header("Params")] 
     
     public Vector2Int levelSize;
-    [Space(10)] [SerializeField] public BlockData[] blockData;
+    [Space(10)] public BlockData[] blockData;
     
     public void Bake()
     {
