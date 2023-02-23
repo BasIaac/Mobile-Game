@@ -23,14 +23,31 @@ public class LevelCreator : MonoBehaviour
    }
    
    [ContextMenu("InitGridSize")]
-   public void InitSize()
+   public void InitGrid()
    {
-      levelInitializer.levelSize = levelSize;
+      outputPourLesGP = String.Empty;
+      ClearGrid();
+
+      for (int i = 0; i < levelSize.x; i++)
+      {
+         for (int j = 0; j < levelSize.y; j++)
+         {
+            Instantiate(levelInitializer.blockData[0].caseObject, new Vector3(i +.5f, -.5f, j+.5f), Quaternion.identity, transform);
+         }
+      }
    }
-   
+
+   private void ClearGrid()
+   {
+      var childCount = transform.childCount;
+      for (int i = 0; i < childCount; i++)
+      {
+         DestroyImmediate(transform.GetChild(0).gameObject);
+      }
+   }
+
    public void GenerateKey()
    {
-      outputPourLesGP = String.Empty;         
       GetAllTiles();
       SortTile();
 
@@ -47,9 +64,9 @@ public class LevelCreator : MonoBehaviour
    private void GetAllTiles()
    {
       childList.Clear();
-      for (int i = 0; i < transform.GetChild(0).childCount; i++)
+      for (int i = 0; i < transform.childCount; i++)
       {
-         Tile tempTile = transform.GetChild(0).GetChild(i).GetComponent<Tile>();
+         Tile tempTile = transform.GetChild(i).GetComponent<Tile>();
          childList.Add(tempTile);
 
          var position = tempTile.transform.position;
