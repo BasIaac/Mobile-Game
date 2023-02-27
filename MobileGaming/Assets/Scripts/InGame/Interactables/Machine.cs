@@ -80,7 +80,7 @@ public abstract class Machine : MonoBehaviour
 
     public void UpdateFeedbackObject()
     {
-        if(feedbackObject is null) return;
+        if(feedbackObject == null) return;
         feedbackObject.SetActive(currentProduct != null);
     }
 }

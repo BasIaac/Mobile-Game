@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ClientSlot : Interactable
@@ -19,7 +16,6 @@ public class ClientSlot : Interactable
         
         if (inProduct is null)
         {
-            outProduct = client.GiveBaseProduct();
             return;
         }
 
