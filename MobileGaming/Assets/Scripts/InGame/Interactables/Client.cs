@@ -50,7 +50,6 @@ public class Client : MonoBehaviour
         {
             Color = ProductColor.White,
             Shape = ProductShape.Good,
-            Size = ProductSize.Normal
         };
 
         hasGivenBaseProduct = true;

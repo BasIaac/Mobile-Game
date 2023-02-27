@@ -7,17 +7,17 @@ public abstract class Machine : MonoBehaviour
     [Header("Feedback")]
     [SerializeField] private TextMeshProUGUI feedbackText;
     
-    [Header("Settings")]
+    [Header("Production Settings")]
     [SerializeField] private float baseTimeToProduce = 5f;
     [SerializeField] private float timeMultiplier = 1f;
-
+    
     private Coroutine workRoutine;
 
     protected double timer { get; private set; }
     protected double waitDuration { get; private set; }
     protected Product currentProduct;
 
-    public void LoadProduct(Product product)
+    public virtual void LoadProduct(Product product)
     {
         if(workRoutine != null) return;
         
@@ -52,7 +52,7 @@ public abstract class Machine : MonoBehaviour
         workRoutine = null;
     }
 
-    public void UnloadProduct(out Product product)
+    public virtual void UnloadProduct(out Product product)
     {
         product = null;
         
@@ -67,6 +67,7 @@ public abstract class Machine : MonoBehaviour
 
     public void UpdateFeedbackText(string text)
     {
+        if(feedbackText is null) return;
         feedbackText.text = text;
     }
 }

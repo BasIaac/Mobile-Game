@@ -9,6 +9,12 @@ public class ClientSlot : Interactable
     
     public override void Interact(Product inProduct, out Product outProduct)
     {
+        if (client is null)
+        {
+            outProduct = inProduct;
+            return;
+        }
+        
         outProduct = inProduct;
         
         if (inProduct is null)

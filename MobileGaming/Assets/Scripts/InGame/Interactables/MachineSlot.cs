@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MachineSlot : Interactable
@@ -12,6 +13,12 @@ public class MachineSlot : Interactable
 
     public override void Interact(Product inProduct,out Product outProduct)
     {
+        if (machine is null)
+        {
+            outProduct = inProduct;
+            return;
+        }
+        
         outProduct = null;
         if (inProduct is null)
         {
