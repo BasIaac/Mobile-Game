@@ -1136,6 +1136,8 @@ MonoBehaviour:
   feedbackImage: {fileID: 1508537761}
   feedbackText: {fileID: 1481672242}
   baseSatisfaction: 45
+  decayPerSecond: 1
+  increaseOnProduct: 0
   data:
     name: 
     productDatas: []
@@ -2870,6 +2872,8 @@ MonoBehaviour:
       productDatas:
       - Color: 3
         Shape: 3
+      - Color: 1
+        Shape: 3
   - time: 3
     data:
       name: Pablo
@@ -2879,6 +2883,12 @@ MonoBehaviour:
   - time: 2
     data:
       name: David
+      productDatas:
+      - Color: 3
+        Shape: 1
+  - time: 2
+    data:
+      name: Sej
       productDatas:
       - Color: 3
         Shape: 1
@@ -2952,6 +2962,8 @@ MonoBehaviour:
   feedbackImage: {fileID: 1145292701}
   feedbackText: {fileID: 815217097}
   baseSatisfaction: 45
+  decayPerSecond: 1
+  increaseOnProduct: 0
   data:
     name: 
     productDatas: []
@@ -3021,6 +3033,8 @@ MonoBehaviour:
   feedbackImage: {fileID: 133800844}
   feedbackText: {fileID: 1028529683}
   baseSatisfaction: 45
+  decayPerSecond: 1
+  increaseOnProduct: 0
   data:
     name: 
     productDatas: []
@@ -3423,6 +3437,8 @@ MonoBehaviour:
   feedbackImage: {fileID: 0}
   feedbackText: {fileID: 3400920022027173738}
   baseSatisfaction: 45
+  decayPerSecond: 0
+  increaseOnProduct: 0
   data:
     name: 
     productDatas: []
