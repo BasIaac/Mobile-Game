@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using TMPro;
 using UnityEngine;
 
@@ -11,8 +10,9 @@ public class Client : MonoBehaviour
     [SerializeField] private TextMeshProUGUI feedbackText;
     
     [Header("Settings")]
+    public ClientData data;
     public ProductData expectedData;
-
+    
     private Product feedbackProduct;
     private bool hasGivenBaseProduct;
 
@@ -78,4 +78,18 @@ public class Client : MonoBehaviour
             SelectProduct(true);
         }
     }
+}
+
+[Serializable]
+public struct ClientData
+{
+    public string name;
+    public List<ProductData> productDatas;
+}
+
+[Serializable]
+public struct ClientTiming
+{
+    public double time;
+    public ClientData data;
 }

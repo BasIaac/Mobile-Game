@@ -1,11 +1,12 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class Machine : MonoBehaviour
 {
     [Header("Feedback")]
-    [SerializeField] private TextMeshProUGUI feedbackText;
+    [SerializeField] private Image feedbackImage;
+    [SerializeField] private GameObject feedbackObject; //TODO Make only one object (one per product), not one per machine and teleport it
     
     [Header("Production Settings")]
     [SerializeField] private float baseTimeToProduce = 5f;
@@ -35,7 +36,9 @@ public abstract class Machine : MonoBehaviour
             yield return null;
             timer += Time.deltaTime;
             
-            UpdateFeedbackText($"{timer/waitDuration:P}%");
+            UpdateFeedbackText(1 - timer/waitDuration);
+            
+            UpdateFeedbackObject();
         }
         
         Work();
@@ -47,7 +50,9 @@ public abstract class Machine : MonoBehaviour
 
     private void EndWork()
     {
-        UpdateFeedbackText($"{currentProduct}");
+        UpdateFeedbackText(0);
+        
+        UpdateFeedbackObject();
         
         workRoutine = null;
     }
@@ -62,12 +67,20 @@ public abstract class Machine : MonoBehaviour
 
         currentProduct = null;
         
-        UpdateFeedbackText("No Product");
+        UpdateFeedbackText(0);
+        
+        UpdateFeedbackObject();
     }
 
-    public void UpdateFeedbackText(string text)
+    public void UpdateFeedbackText(double amount)
     {
-        if(feedbackText is null) return;
-        feedbackText.text = text;
+        if(feedbackImage is null) return;
+        feedbackImage.fillAmount = (float)amount;
+    }
+
+    public void UpdateFeedbackObject()
+    {
+        if(feedbackObject is null) return;
+        feedbackObject.SetActive(currentProduct != null);
     }
 }

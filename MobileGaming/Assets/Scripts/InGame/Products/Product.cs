@@ -45,7 +45,7 @@ public struct ProductData
     }
 }
 
-public enum ProductShape {Good,Bad}
-public enum ProductColor {White,Shiny}
+public enum ProductShape {Blurry,Good,Epic,Lmao} 
+public enum ProductColor {Transparent,White,Black,Red}
 
 
