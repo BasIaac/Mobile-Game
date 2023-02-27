@@ -96,5 +96,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8800a95429edec2479990b67914fa8d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  typeCases: 0
+  typeCases: 2
   posOnTileSet: {x: 0, y: 0, z: 0}

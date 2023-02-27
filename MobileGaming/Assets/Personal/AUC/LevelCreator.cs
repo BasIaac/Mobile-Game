@@ -6,25 +6,44 @@ using UnityEngine;
 [RequireComponent(typeof(Grid))]
 public class LevelCreator : MonoBehaviour
 {
-   [Header("Key Gen")]
-   [SerializeField] private string outputPourLesGP;
+   [Header("References PAS TOUCHE")]
+   [SerializeField] private LevelInitializer levelInitializer;
+   [SerializeField] private Grid grid;
    
-    [SerializeField] private LevelInitializer levelInitializer;
-    [SerializeField] private Grid grid;
-    public Vector2Int levelSize;
+   [Space]
+   [Header("Key Gen")] 
+   [Tooltip("Clé du niveau")]
+   [SerializeField] private string outputLevelKey;
+   
+   [Space]
+   [Header("LevelEditorSection")] 
+   [Tooltip("Taille du LD au format 0x0 ")]
+   public Vector2Int levelSize;
+   
+   [Tooltip("Temps que le joueur a pour finir le niveau")]
+   public float levelTimer = default;
+   
+   [Tooltip("Score que le joueur doit atteindre pour finir le niveau")]
+   public float scoreForEndLevel = default;
+   
+   [Space]
+   [Header("Client List")]
+   [Tooltip("Liste des clients présent dans le niveau")]
+   public List<Client> clientList;
+   
+   [Space]
+   [Header("Client List")]
+   [Tooltip("Liste des machine présentes dans le niveau")]
+   public List<Machine> machineList;
+   
+    
+    // Private region
     private List<Tile> childList = new();
     private List<Tile> sortedList = new();
-
-   [ContextMenu("Setup Level Creation")]
-   public void Setup()
-   {
-      grid = GetComponent<Grid>();
-   }
-   
-   [ContextMenu("InitGridSize")]
+    
    public void InitGrid()
    {
-      outputPourLesGP = String.Empty;
+      outputLevelKey = String.Empty;
       ClearGrid();
 
       for (int i = 0; i < levelSize.x; i++)
@@ -36,7 +55,7 @@ public class LevelCreator : MonoBehaviour
       }
    }
 
-   private void ClearGrid()
+   public void ClearGrid()
    {
       var childCount = transform.childCount;
       for (int i = 0; i < childCount; i++)
@@ -47,16 +66,18 @@ public class LevelCreator : MonoBehaviour
 
    public void GenerateKey()
    {
+      outputLevelKey = String.Empty;
+      outputLevelKey += $"{levelSize.x};{levelSize.y};{levelTimer};";
+      
       GetAllTiles();
       SortTile();
 
       for (int i = 0; i < childList.Count; i++)
       {
-         outputPourLesGP += GetChar(sortedList[i].typeCases);
+         outputLevelKey += levelInitializer.SetCharByBlock(sortedList[i].typeCases);
       }
-
-      levelInitializer.levelSize = levelSize;
-      levelInitializer.levelStringKey = outputPourLesGP;
+      
+      levelInitializer.levelStringKey = outputLevelKey;
       levelInitializer.Bake();
    }
 
@@ -79,26 +100,11 @@ public class LevelCreator : MonoBehaviour
       sortedList = childList.ToList();
       sortedList.Sort();
    }
-
-   private char GetChar(TypeCases typeCases)
-   {
-      return typeCases switch
-      {
-         TypeCases.Empty => 'e',
-         TypeCases.Obstacle => 'o',
-         TypeCases.Floor => 'f',
-         TypeCases.Machine => 'm',
-         TypeCases.AnchorMachinePoint => 'a',
-         _ => '\0'
-      };
-   }
-
-   [ContextMenu("BuildLevel")]
    public void BuildLevel()
    {
       GenerateKey();
-      levelInitializer.levelSize = levelSize;
-      levelInitializer.levelStringKey = outputPourLesGP;
+      //levelInitializer.levelSize = levelSize;
+      levelInitializer.levelStringKey = outputLevelKey;
       levelInitializer.Bake();
    }
 }

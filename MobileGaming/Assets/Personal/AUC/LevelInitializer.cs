@@ -7,6 +7,7 @@ public class LevelInitializer : MonoBehaviour
     public string levelStringKey;
     private char c;
     private int blockIndex;
+    private float timerOfTheLevel;
 
     [Header("Params")] 
     
@@ -16,22 +17,32 @@ public class LevelInitializer : MonoBehaviour
     public void Bake()
     {
         ClearGrid();
+        string[] separatedStringKey = levelStringKey.Split(';');
+
+        levelSize.x = int.Parse(separatedStringKey[0]);
+        levelSize.y = int.Parse(separatedStringKey[1]);
+        timerOfTheLevel = float.Parse(separatedStringKey[2]);
         
         for (int x = 0; x < levelSize.x; x++)
         {
             for (var y = 0; y < levelSize.y; y++)
             {
-                c = levelStringKey[blockIndex]; 
-                Debug.Log(c);
+                //c = levelStringKey[blockIndex];
+                c = separatedStringKey[3][blockIndex];
                 GameObject GO = Instantiate(SetBlockByChar(c), new Vector3(x, 0, y), Quaternion.identity, transform);
                 blockIndex++;
             }
         }
     }
 
-    private GameObject SetBlockByChar(char c)
+    private GameObject SetBlockByChar(char actualChar)
     {
-        return (from data in blockData where data.c == c select data.caseObject).FirstOrDefault();
+        return (from data in blockData where data.c == actualChar select data.caseObject).FirstOrDefault();
+    }
+
+    public Char SetCharByBlock(TypeCases actualType)
+    {
+        return (from data in blockData where data.type == actualType select data.c).FirstOrDefault();
     }
 
     public void ClearGrid()
@@ -47,7 +58,7 @@ public class LevelInitializer : MonoBehaviour
 
 public enum TypeCases
 {
-    Empty, Obstacle, Floor, Machine, AnchorMachinePoint
+    Client, Floor, Empty, MachineAnchor, Obstacle, PowerUp, Wall 
 }
 
 [Serializable]

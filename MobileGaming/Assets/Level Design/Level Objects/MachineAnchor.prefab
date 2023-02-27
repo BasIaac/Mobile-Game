@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1764974688692401905}
   - component: {fileID: 6379789386309712356}
   m_Layer: 0
-  m_Name: MachineAvailable
+  m_Name: MachineAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

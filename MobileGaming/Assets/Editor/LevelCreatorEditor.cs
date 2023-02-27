@@ -10,8 +10,8 @@
          EditorGUILayout.Space(20);
          LevelCreator levelCreator = (LevelCreator)target;
          GUILayout.BeginHorizontal();
-         if (GUILayout.Button("SetupGrid")) { levelCreator.InitGrid(); }
-         if (GUILayout.Button("Generate Key")) { levelCreator.GenerateKey(); }
+         if (GUILayout.Button("Setup Grid")) { levelCreator.InitGrid(); }
+         if (GUILayout.Button("Clear Grid")) { levelCreator.ClearGrid(); }
          GUILayout.EndHorizontal();
          GUILayout.BeginVertical();
          if (GUILayout.Button("Generate Key")) { levelCreator.GenerateKey(); }
