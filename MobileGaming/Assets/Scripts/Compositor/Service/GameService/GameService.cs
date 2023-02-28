@@ -48,14 +48,16 @@ namespace Service
             void LoadJoystickCanvas(GameObject joystickCanvasGo)
             {
                 var joystickCanvas = Object.Instantiate(joystickCanvasGo).GetComponent<JoystickComponents>();
-                Release(joystickCanvasGo);
+                // TODO - apply sprites, then release
+                //Release(joystickCanvasGo);
                 
                 AddressableHelper.LoadAssetAsyncWithCompletionHandler<GameObject>("SorcererController", LoadSorcererController);
 
                 void LoadSorcererController(GameObject sorcererControllerGo)
                 {
                     sorcererController = Object.Instantiate(sorcererControllerGo).GetComponent<SorcererController>();
-                    Release(sorcererControllerGo);
+                    // TODO - apply materials, then release
+                    //Release(sorcererControllerGo);
 
                     sorcererController.perspCameraGo = cameras.perspCameraGo;
                     sorcererController.perspCam = cameras.perspCamera;
