@@ -26,7 +26,7 @@ public class MachineSlot : Interactable
         {
             machine.LoadProduct(inProduct);
         }
-        machine.UnloadProduct(inProduct,out outProduct);
+        machine.UnloadProduct(out outProduct);
     }
 
 }

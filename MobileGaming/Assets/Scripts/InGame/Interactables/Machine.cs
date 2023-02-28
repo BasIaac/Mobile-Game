@@ -21,14 +21,20 @@ public abstract class Machine : MonoBehaviour
     
     public virtual void LoadProduct(Product inProduct,out Product outProduct)
     {
+        outProduct = inProduct;
+        if (workRoutine is not null) return;
         
+        UnloadProduct(out outProduct);
+        
+        if (inProduct is not null)
+        {
+            LoadProduct(inProduct);
+        }
     }
     
 
     public virtual void LoadProduct(Product product)
     {
-        if(workRoutine != null) return;
-        
         currentProduct = product;
         waitDuration = baseTimeToProduce * 1f / timeMultiplier;
 
@@ -64,12 +70,8 @@ public abstract class Machine : MonoBehaviour
         workRoutine = null;
     }
 
-    public virtual void UnloadProduct(Product inProduct,out Product outProduct)
+    public virtual void UnloadProduct(out Product outProduct)
     {
-        outProduct = inProduct;
-        
-        if(workRoutine != null) return;
-        
         outProduct = currentProduct;
 
         currentProduct = null;
