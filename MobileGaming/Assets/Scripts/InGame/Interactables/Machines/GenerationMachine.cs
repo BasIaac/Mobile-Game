@@ -10,7 +10,7 @@ public class GenerationMachine : Machine
         
     }
 
-    public override void UnloadProduct(out Product product)
+    public override void UnloadProduct(Product inProduct,out Product product)
     {
         product = newProduct;
     }

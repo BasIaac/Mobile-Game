@@ -18,6 +18,13 @@ public abstract class Machine : MonoBehaviour
     protected double waitDuration { get; private set; }
     protected Product currentProduct;
 
+    
+    public virtual void LoadProduct(Product inProduct,out Product outProduct)
+    {
+        
+    }
+    
+
     public virtual void LoadProduct(Product product)
     {
         if(workRoutine != null) return;
@@ -57,13 +64,13 @@ public abstract class Machine : MonoBehaviour
         workRoutine = null;
     }
 
-    public virtual void UnloadProduct(out Product product)
+    public virtual void UnloadProduct(Product inProduct,out Product outProduct)
     {
-        product = null;
+        outProduct = inProduct;
         
         if(workRoutine != null) return;
         
-        product = currentProduct;
+        outProduct = currentProduct;
 
         currentProduct = null;
         
