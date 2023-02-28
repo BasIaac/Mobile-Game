@@ -38,7 +38,7 @@ public class SorcererController : MonoBehaviour
 
     private void Update()
     {
-        AgentMovement();
+        //AgentMovement();
     }
 
     private void AgentMovement()
@@ -107,7 +107,7 @@ public class SorcererController : MonoBehaviour
             agent.SetDestination(hit.point);
         }
     }
-
+    
     private void Interact()
     {
         if(isNavMeshControlled) StopAgent();
