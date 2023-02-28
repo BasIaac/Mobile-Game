@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2990182333075157049}
   - component: {fileID: 9061940466411690829}
-  - component: {fileID: 8473140293726149106}
   m_Layer: 0
   m_Name: Sorcerer Controller
   m_TagString: Untagged
@@ -58,22 +57,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   rayLenght: 75
-  speed: 200
---- !u!114 &8473140293726149106
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2990182333075157050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6b7aa766a37ba4468cbb90eb71d9152, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  machineLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
+  speed: 300
 --- !u!1 &5238849128981398589
 GameObject:
   m_ObjectHideFlags: 0
