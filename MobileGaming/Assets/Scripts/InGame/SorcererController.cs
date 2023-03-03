@@ -71,7 +71,7 @@ public class SorcererController : MonoBehaviour
         rb.velocity = movement * (speed * Time.deltaTime);
     }
 
-    private void OnScreenTouch(Vector2 position)
+    public void OnScreenTouch(Vector2 position)
     {
         isPressed = true;
         if(isNavMeshControlled) return;
@@ -85,7 +85,7 @@ public class SorcererController : MonoBehaviour
         joystickParentGo.SetActive(true);
     }
 
-    private void OnScreenRelease(Vector2 position)
+    public void OnScreenRelease(Vector2 position)
     {
         isPressed = false;
         ResetJoystick();
