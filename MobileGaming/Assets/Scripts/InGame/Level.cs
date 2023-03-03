@@ -1,7 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class Level : MonoBehaviour
 {
@@ -72,6 +75,81 @@ public class Level : MonoBehaviour
         nextTiming.time += maxTime;
         queuedTimings.Enqueue(nextTiming);
     }
+    
+#if UNITY_EDITOR
+    [CustomEditor(typeof(Level)),CanEditMultipleObjects]
+    public class LevelEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+            
+            var level = (Level)target;
+            
+            EditorGUILayout.LabelField("Client Settings",EditorStyles.boldLabel);
+            
+            EditorGUILayout.IntField("Product Count", level.clientsDatas.Count); // TODO - change array size on modification
+
+            foreach (var timing in level.clientsDatas)
+            {
+                var client = timing.data;
+                
+                EditorGUILayout.LabelField("Product Settings",EditorStyles.boldLabel);
+            
+                client.name = EditorGUILayout.TextField("Client Name",client.name);
+                
+                for (var index = 0; index < client.productDatas.Length; index++)
+                {
+                    var productData = client.productDatas[index];
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.PrefixLabel($"Product {index}");
+                    productData.Color = (ProductColor)EditorGUILayout.EnumPopup(productData.Color);
+                    productData.Shape = (ProductShape)EditorGUILayout.EnumPopup(productData.Shape);
+                    EditorGUILayout.EndHorizontal();
+                    client.productDatas[index] = productData;
+                }
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.Space(15);
+                if (GUILayout.Button("+",GUILayout.Width(25)))
+                {
+                    client.productDatas = new ProductData[client.productDatas.Length + 1];
+                }
+                if (GUILayout.Button("-",GUILayout.Width(25)))
+                {
+                    if(client.productDatas.Length > 0) client.productDatas = new ProductData[client.productDatas.Length - 1];
+                }
+                EditorGUILayout.EndHorizontal();
+                
+                
+            }
+            
+            
+            
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.Space(15);
+            if (GUILayout.Button("+",GUILayout.Width(25)))
+            {
+                level.clientsDatas.Add(new ClientTiming()
+                {
+                    data = new ClientData()
+                    {
+                        productDatas = Array.Empty<ProductData>()
+                    }
+                });
+            }
+            if (GUILayout.Button("-",GUILayout.Width(25)))
+            {
+                if (level.clientsDatas.Count > 0)
+                {
+                    level.clientsDatas.RemoveAt(level.clientsDatas.Count-1);
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+            
+        }
+    }
+#endif
 }
 
 [Serializable]

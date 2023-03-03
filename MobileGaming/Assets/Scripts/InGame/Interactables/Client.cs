@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class Client : MonoBehaviour
 {
@@ -17,15 +20,14 @@ public class Client : MonoBehaviour
     [SerializeField] private float decayPerSecond = 1f;
     [SerializeField] private float increaseOnProduct;
     
-    [Header("Product Settings")]
-    public ClientData data;
+    [HideInInspector] public ClientData data;
     private ProductData expectedData => data.productDatas[currentDataIndex];
     
     private int currentDataIndex = 0;
     private Product feedbackProduct;
 
     private Coroutine satisfactionRoutine;
-    private WaitForSeconds satisfactionWait = new WaitForSeconds(0.1f);
+    private WaitForSeconds satisfactionWait = new (0.1f);
 
     private void Start()
     {
@@ -57,7 +59,7 @@ public class Client : MonoBehaviour
 
             satisfactionRoutine = StartCoroutine(SatisfactionRoutine());
             
-            if (currentDataIndex >= data.productDatas.Count)
+            if (currentDataIndex >= data.productDatas.Length)
             {
                 IncreasePoints();
                 StopClient();
@@ -108,11 +110,69 @@ public class Client : MonoBehaviour
     {
         feedbackImage.fillAmount = currentSatisfaction / baseSatisfaction;
     }
+    
+#if UNITY_EDITOR
+    [CustomEditor(typeof(Client)),CanEditMultipleObjects]
+    public class ClientEditor : Editor
+    {
+        private int productDataCount = 0;
+        
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+            
+            var client = (Client)target;
+            
+            EditorGUILayout.LabelField("Product Settings",EditorStyles.boldLabel);
+            
+            client.data.name = EditorGUILayout.TextField("Client Name",client.data.name);
+            
+            productDataCount = EditorGUILayout.IntField("Product Count", productDataCount);
+
+            var currentLenght = client.data.productDatas.Length;
+            if (currentLenght != productDataCount)
+            {
+                var data = new ProductData[productDataCount];
+                
+                for (int i = 0; i < (currentLenght < productDataCount ? currentLenght : productDataCount); i++)
+                {
+                    data[i] = client.data.productDatas[i];
+                }
+
+                client.data.productDatas = data;
+            }
+
+            for (var index = 0; index < productDataCount; index++)
+            {
+                var productData = client.data.productDatas[index];
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.PrefixLabel($"Product {index}");
+                productData.Color = (ProductColor)EditorGUILayout.EnumPopup(productData.Color);
+                productData.Shape = (ProductShape)EditorGUILayout.EnumPopup(productData.Shape);
+                EditorGUILayout.EndHorizontal();
+                client.data.productDatas[index] = productData;
+            }
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.Space(15);
+            if (GUILayout.Button("+",GUILayout.Width(25)))
+            {
+                productDataCount++;
+            }
+            if (GUILayout.Button("-",GUILayout.Width(25)))
+            {
+                if(productDataCount>= 1) productDataCount--;
+            }
+            EditorGUILayout.EndHorizontal();
+            
+        }
+    }
+#endif
 }
 
 [Serializable]
 public struct ClientData
 {
     public string name;
-    public List<ProductData> productDatas;
+    public ProductData[] productDatas;
 }
