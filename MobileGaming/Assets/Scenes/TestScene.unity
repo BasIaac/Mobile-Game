@@ -3057,7 +3057,7 @@ MonoBehaviour:
   newProduct:
     data:
       Color: 0
-      Shape: 2
+      Shape: 0
 --- !u!114 &1275899745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3639,30 +3639,22 @@ MonoBehaviour:
   clientsDatas:
   - time: 0
     data:
-      name: Bob
+      name: 
       productDatas:
-      - Color: 3
-        Shape: 3
-      - Color: 1
-        Shape: 3
-  - time: 3
-    data:
-      name: Pablo
-      productDatas:
-      - Color: 3
+      - Color: 2
         Shape: 1
-  - time: 2
+      - Color: 0
+        Shape: 0
+      - Color: 0
+        Shape: 0
+  - time: 0
     data:
-      name: David
-      productDatas:
-      - Color: 3
-        Shape: 1
-  - time: 2
+      name: 
+      productDatas: []
+  - time: 0
     data:
-      name: Sej
-      productDatas:
-      - Color: 3
-        Shape: 1
+      name: 
+      productDatas: []
   clients:
   - {fileID: 1462151172}
   - {fileID: 637799385}
@@ -3807,8 +3799,16 @@ MonoBehaviour:
   decayPerSecond: 1
   increaseOnProduct: 0
   data:
-    name: 
-    productDatas: []
+    name: test
+    productDatas:
+    - Color: 0
+      Shape: 0
+    - Color: 0
+      Shape: 0
+    - Color: 0
+      Shape: 0
+    - Color: 0
+      Shape: 0
 --- !u!1 &1477641673
 GameObject:
   m_ObjectHideFlags: 0
