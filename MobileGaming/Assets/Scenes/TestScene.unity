@@ -995,7 +995,7 @@ MonoBehaviour:
   baseTimeToProduce: 5
   timeMultiplier: 1
   changeColor: 1
-  targetColor: 2
+  targetColor: 0
   changeShape: 0
   targetShape: 0
 --- !u!1 &477632383
@@ -2194,10 +2194,10 @@ MonoBehaviour:
   feedbackText: {fileID: 1933099955}
   baseTimeToProduce: 5
   timeMultiplier: 1
-  changeColor: 1
+  changeColor: 0
   targetColor: 1
   changeShape: 0
-  targetShape: 0
+  targetShape: 2
 --- !u!1 &1028529681
 GameObject:
   m_ObjectHideFlags: 0
@@ -3057,7 +3057,7 @@ MonoBehaviour:
   newProduct:
     data:
       Color: 0
-      Shape: 0
+      Shape: 2
 --- !u!114 &1275899745
 MonoBehaviour:
   m_ObjectHideFlags: 0

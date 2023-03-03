@@ -1,9 +1,12 @@
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class GenerationMachine : Machine
 {
-    [Header("Work Settings")]
-    public Product newProduct;
+    [HideInInspector] public Product newProduct;
 
     public override void StartFeedback()
     {
@@ -19,4 +22,27 @@ public class GenerationMachine : Machine
     {
         product = newProduct;
     }
+    
+#if UNITY_EDITOR
+    [CustomEditor(typeof(GenerationMachine)),CanEditMultipleObjects]
+    public class GenerationMachineProductEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+
+            var machine = (GenerationMachine)target;
+            
+            EditorGUILayout.LabelField("Work Settings",EditorStyles.boldLabel);
+            EditorGUILayout.BeginHorizontal();
+
+            EditorGUILayout.LabelField("Generated Product :",GUILayout.MaxWidth(160));
+            machine.newProduct.data.Shape = (ProductShape) EditorGUILayout.EnumPopup( machine.newProduct.data.Shape);
+            machine.newProduct.data.Color = (ProductColor) EditorGUILayout.EnumPopup( machine.newProduct.data.Color);
+            
+            EditorGUILayout.EndHorizontal();
+        }
+    }
+#endif
 }
+
