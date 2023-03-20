@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 #if UNITY_EDITOR
+using Unity.VisualScripting;
 using UnityEditor;
 #endif
 
 public class Level : MonoBehaviour
 {
-    [Header("Setup with tool by GD")]
-    public List<ClientTiming> clientsDatas = new ();
+    private List<ClientTiming> clientTimings = new ();
 
     [Header("Setup with tool automatically")]
     public List<Client> clients = new ();
@@ -36,9 +37,9 @@ public class Level : MonoBehaviour
 
     private void SetupQueue()
     {
-        clientsDatas.Sort();
+        clientTimings.Sort();
         maxTime = 0;
-        foreach (var clientData in clientsDatas)
+        foreach (var clientData in clientTimings)
         {
             queuedTimings.Enqueue(clientData);
             if (maxTime < clientData.time) maxTime = clientData.time;
@@ -72,7 +73,7 @@ public class Level : MonoBehaviour
         
         availableClients.Dequeue().SetData(queuedTimings.Dequeue().data);
 
-        nextTiming.time += maxTime;
+        nextTiming.time += (float)maxTime;
         queuedTimings.Enqueue(nextTiming);
     }
     
@@ -80,57 +81,106 @@ public class Level : MonoBehaviour
     [CustomEditor(typeof(Level)),CanEditMultipleObjects]
     public class LevelEditor : Editor
     {
+        private int clientTimingCount;
+        private int[] clientDataCount = Array.Empty<int>();
+        
         public override void OnInspectorGUI()
         {
-            base.OnInspectorGUI();
+            var script = MonoScript.FromMonoBehaviour(target as MonoBehaviour);
+            EditorGUI.BeginDisabledGroup(true);
+            EditorGUILayout.ObjectField("Script", script, typeof(MonoScript), false);
+            EditorGUI.EndDisabledGroup();
             
             var level = (Level)target;
             
-            EditorGUILayout.LabelField("Client Settings",EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Level Settings",EditorStyles.boldLabel);
             
-            EditorGUILayout.IntField("Product Count", level.clientsDatas.Count); // TODO - change array size on modification
+            clientTimingCount = EditorGUILayout.IntField("Client Count", level.clientTimings.Count);
 
-            foreach (var timing in level.clientsDatas)
+            if (clientTimingCount != level.clientTimings.Count)
             {
-                var client = timing.data;
-                
-                EditorGUILayout.LabelField("Product Settings",EditorStyles.boldLabel);
-            
-                client.name = EditorGUILayout.TextField("Client Name",client.name);
-                
-                for (var index = 0; index < client.productDatas.Length; index++)
+                var dif = level.clientTimings.Count - clientTimingCount;
+
+                if (dif > 0) for (int i = 0; i < dif; i++) RemoveClientTiming();
+                else for (int i = 0; i < -dif; i++) AddClientTiming();
+            }
+
+            if (clientDataCount.Length != level.clientTimings.Count)
+            {
+                clientDataCount = new int[level.clientTimings.Count];
+                for (int i = 0; i < level.clientTimings.Count; i++)
                 {
-                    var productData = client.productDatas[index];
+                    clientDataCount[i] = level.clientTimings[i].data.productDatas.Length;
+                }
+            }
+
+            EditorGUI.indentLevel++;
+            for (var timingIndex = 0; timingIndex < level.clientTimings.Count; timingIndex++)
+            {
+                var timing = level.clientTimings[timingIndex];
+                
+                EditorGUILayout.LabelField("Client Settings", EditorStyles.boldLabel);
+
+                timing.time = EditorGUILayout.FloatField("Client Time", timing.time);
+                timing.data.name = EditorGUILayout.TextField("Client Name", timing.data.name);
+                
+                EditorGUILayout.BeginHorizontal();
+                clientDataCount[timingIndex] = EditorGUILayout.IntField("Product Count", clientDataCount[timingIndex]);
+                if (GUILayout.Button("+", GUILayout.Width(25)))
+                {
+                    clientDataCount[timingIndex]++;
+                }
+
+                if (GUILayout.Button("-", GUILayout.Width(25)))
+                {
+                    if(clientDataCount[timingIndex] > 0) clientDataCount[timingIndex]--;
+                }
+                EditorGUILayout.EndHorizontal();
+                
+                var currentLenght = level.clientTimings[timingIndex].data.productDatas.Length;
+                if (currentLenght != clientDataCount[timingIndex])
+                {
+                    var data = new ProductData[clientDataCount[timingIndex]];
+                
+                    for (int i = 0; i < (currentLenght < clientDataCount[timingIndex] ? currentLenght : clientDataCount[timingIndex]); i++)
+                    {
+                        data[i] = level.clientTimings[timingIndex].data.productDatas[i];
+                    }
+                    level.clientTimings[timingIndex].data.productDatas = data;
+                }
+                
+                for (var index = 0; index < clientDataCount[timingIndex]; index++)
+                {
+                    var productData =  level.clientTimings[timingIndex].data.productDatas[index];
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.PrefixLabel($"Product {index}");
                     productData.Color = (ProductColor)EditorGUILayout.EnumPopup(productData.Color);
                     productData.Shape = (ProductShape)EditorGUILayout.EnumPopup(productData.Shape);
                     EditorGUILayout.EndHorizontal();
-                    client.productDatas[index] = productData;
+                    level.clientTimings[timingIndex].data.productDatas[index] = productData;
                 }
-
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.Space(15);
-                if (GUILayout.Button("+",GUILayout.Width(25)))
-                {
-                    client.productDatas = new ProductData[client.productDatas.Length + 1];
-                }
-                if (GUILayout.Button("-",GUILayout.Width(25)))
-                {
-                    if(client.productDatas.Length > 0) client.productDatas = new ProductData[client.productDatas.Length - 1];
-                }
-                EditorGUILayout.EndHorizontal();
-                
-                
             }
-            
-            
+            EditorGUI.indentLevel=0;
             
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.Space(15);
             if (GUILayout.Button("+",GUILayout.Width(25)))
             {
-                level.clientsDatas.Add(new ClientTiming()
+                AddClientTiming();
+            }
+            if (GUILayout.Button("-",GUILayout.Width(25)))
+            {
+                RemoveClientTiming();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            var list = serializedObject.FindProperty("clients");
+            EditorGUILayout.PropertyField(list);
+            serializedObject.ApplyModifiedProperties();
+            
+            void AddClientTiming()
+            {
+                level.clientTimings.Add(new ClientTiming()
                 {
                     data = new ClientData()
                     {
@@ -138,24 +188,23 @@ public class Level : MonoBehaviour
                     }
                 });
             }
-            if (GUILayout.Button("-",GUILayout.Width(25)))
+
+            void RemoveClientTiming()
             {
-                if (level.clientsDatas.Count > 0)
+                if (level.clientTimings.Count > 0)
                 {
-                    level.clientsDatas.RemoveAt(level.clientsDatas.Count-1);
+                    level.clientTimings.RemoveAt(level.clientTimings.Count-1);
                 }
             }
-            EditorGUILayout.EndHorizontal();
-            
         }
     }
 #endif
 }
 
 [Serializable]
-public struct ClientTiming : IComparable<ClientTiming>
+public class ClientTiming : IComparable<ClientTiming>
 {
-    public double time;
+    public float time;
     public ClientData data;
 
     public int CompareTo(ClientTiming other)

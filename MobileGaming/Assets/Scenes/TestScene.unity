@@ -3636,29 +3636,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a70c68433140d748bd40c37fb808550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clientsDatas:
-  - time: 0
-    data:
-      name: 
-      productDatas:
-      - Color: 2
-        Shape: 1
-      - Color: 0
-        Shape: 0
-      - Color: 0
-        Shape: 0
-  - time: 0
-    data:
-      name: 
-      productDatas: []
-  - time: 0
-    data:
-      name: 
-      productDatas: []
   clients:
   - {fileID: 1462151172}
   - {fileID: 637799385}
-  - {fileID: 1427678729}
+  - {fileID: 637799385}
 --- !u!1 &1427678721 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2148767382858812131, guid: 765d87e21ccea9240845fe62054b1e4d,
