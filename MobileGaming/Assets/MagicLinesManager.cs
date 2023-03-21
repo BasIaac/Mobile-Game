@@ -12,7 +12,7 @@ public class MagicLinesManager : MonoBehaviour
 
     [SerializeField] private LayerMask machineLayerMask;
     [SerializeField] private bool isInMagicMode;
-    
+
     [SerializeField] private int maxMana;
     [SerializeField] private int currentMana;
     [SerializeField] private int bonusMana;
@@ -20,7 +20,7 @@ public class MagicLinesManager : MonoBehaviour
 
     [SerializeField] private Vector3 baseCamPos;
     [SerializeField] private Vector3 magicModeCamPos;
-    
+
     public GameObject linePrefab;
     public Vector3[] points;
     public List<LineRenderer> magicLinks;
@@ -34,6 +34,8 @@ public class MagicLinesManager : MonoBehaviour
     private bool isDraging;
     private SorcererController player;
 
+    public GameObject orthoCam;
+    public GameObject perspCam;
 
 
     private void Start()
@@ -49,8 +51,12 @@ public class MagicLinesManager : MonoBehaviour
         // Mana
         currentMana = maxMana + bonusMana;
         UpdateManaDebug();
+
+        orthoCam = GameObject.Find("Ortho");
+        perspCam = GameObject.Find("Persp");
+        orthoCam.SetActive(false);
     }
-    
+
 
     public void ToggleMagic()
     {
@@ -63,8 +69,8 @@ public class MagicLinesManager : MonoBehaviour
         else OnDisableMagicMode();
 
         // Camera Pos & Rot
-        player.perspCam.transform.position = isInMagicMode ? magicModeCamPos : baseCamPos;
-        player.perspCam.transform.rotation = isInMagicMode ? Quaternion.Euler(90, 0, 0) : Quaternion.Euler(80, 0, 0);
+        /*player.perspCam.transform.position = isInMagicMode ? magicModeCamPos : baseCamPos;
+        player.perspCam.transform.rotation = isInMagicMode ? Quaternion.Euler(90, 0, 0) : Quaternion.Euler(80, 0, 0);*/
 
         // Timescale 
         Time.timeScale = isInMagicMode ? .6f : 1;
@@ -78,6 +84,8 @@ public class MagicLinesManager : MonoBehaviour
         InputService.OnRelease += OnScreenRelease;
         InputService.OnPress -= player.OnScreenTouch;
         InputService.OnRelease -= player.OnScreenRelease;
+        perspCam.SetActive(false);
+        orthoCam.SetActive(true);
     }
 
     private void OnDisableMagicMode()
@@ -86,6 +94,8 @@ public class MagicLinesManager : MonoBehaviour
         InputService.OnRelease -= OnScreenRelease;
         InputService.OnPress += player.OnScreenTouch;
         InputService.OnRelease += player.OnScreenRelease;
+        orthoCam.SetActive(false);
+        perspCam.SetActive(true);
     }
 
     #region Drag & Drop
@@ -95,7 +105,7 @@ public class MagicLinesManager : MonoBehaviour
         if (currentMana < 1) return;
         // Sfx can't interact
         // Vfx can't interact
-        
+
         isPressed = true;
         m1 = GetClickMachine(obj);
         if (m1 != null) StartDrag();
@@ -160,6 +170,7 @@ public class MagicLinesManager : MonoBehaviour
         {
             lr.SetPosition(i, points[i] + Vector3.up);
         }
+
         GenerateMeshCollider(lr);
     }
 
@@ -173,7 +184,7 @@ public class MagicLinesManager : MonoBehaviour
 
     #endregion
 
-    #region Useful Methods
+    #region DrawLines&Mesh
 
     private void GenerateMeshCollider(LineRenderer _lineRenderer)
     {
@@ -183,50 +194,61 @@ public class MagicLinesManager : MonoBehaviour
         Mesh mesh = new Mesh();
         _lineRenderer.BakeMesh(mesh, true);
         collider.sharedMesh = mesh;
-        _lineRenderer.gameObject.layer = LayerMask.NameToLayer("MagicLink");
+        _lineRenderer.gameObject.layer = LayerMask.NameToLayer("Link");
     }
-    
-    /*[Space(10)][Header("Draw Line")]
-    public GameObject currentLine;
-    public LineRenderer lineRenderer;
-    public List<Vector3> fingerPos;
-    private void Update() 
+
+    private Coroutine drawing;
+    private GameObject lineGO;
+
+    // Update is called once per frame
+    void Update()
     {
-        if (!isDraging) return;
+        if (!isDraging && !isInMagicMode) return;
+        
         if (Input.GetMouseButtonDown(0))
         {
-            CreateLine();
+            StartLine();
         }
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonUp(0))
         {
-            Vector2 uwu = Camera.main.ScreenToWorldPoint(InputService.cursorPosition);
-            Vector3 tempFingerPos = new Vector3(uwu.x, 1, uwu.y);
-            if (Vector3.Distance(tempFingerPos, fingerPos[^1]) > .1f)
-            {
-                UpdateLine(tempFingerPos);
-            }
+            FinishLine();
         }
     }
 
-    private void CreateLine()
+    private void StartLine()
     {
-        currentLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity);
-        lineRenderer = currentLine.GetComponent<LineRenderer>();
-        fingerPos.Clear();
-        var owo = Camera.main.ScreenToWorldPoint(InputService.cursorPosition);
-        fingerPos.Add(new Vector3(owo.x, 1, owo.y));
-        fingerPos.Add(new Vector3(owo.x, 1, owo.y));
-        lineRenderer.SetPosition(0, fingerPos[0]);
-        lineRenderer.SetPosition(1, fingerPos[1]);
+        if (drawing != null)
+        {
+            StopCoroutine(drawing);
+        }
+
+        drawing = StartCoroutine(DrawLine());
     }
 
-    private void UpdateLine(Vector3 newFingerPos)
+    private void FinishLine()
     {
-        fingerPos.Add(newFingerPos);
-        lineRenderer.positionCount++;
-        lineRenderer.SetPosition(lineRenderer.positionCount - 1, newFingerPos);
-    }*/
-    
+        if (drawing == null) return;
+        StopCoroutine(drawing);
+        Destroy(lineGO);
+    }
+
+    IEnumerator DrawLine()
+    {
+        lineGO = Instantiate(Resources.Load("Line") as GameObject,
+            new Vector3(0, 0, 0), Quaternion.identity);
+        LineRenderer line = lineGO.GetComponent<LineRenderer>();
+        line.positionCount = 0;
+
+        while (true)
+        {
+            Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            position.y = .5f;
+            line.positionCount++;
+            line.SetPosition(line.positionCount - 1, position);
+            yield return null;
+        }
+    }
+
     #endregion
 }
