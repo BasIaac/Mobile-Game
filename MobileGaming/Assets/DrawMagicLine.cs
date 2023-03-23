@@ -1,20 +1,19 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Line : MonoBehaviour
+public class DrawMagicLine : MonoBehaviour
 {
     [Tooltip("Layer to avoid collision")]
-    [SerializeField] private LayerMask linkLayer;
+    [SerializeField] public LayerMask linkLayer;
     [Tooltip("Two materials to show if the line collide or not with others lines. \n 0 = Not collide / 1 = Collide")]
-    [SerializeField] private Material[] linkMaterials;
+    [SerializeField] public Material[] linkMaterials;
     [Tooltip("Time to wait between 2 reset of baking Mesh Collider")] 
     [SerializeField] private float resetCollisionDetectionTime = 0.25f;
-
+    [SerializeField] public bool isLinkable;
+    
     private MeshCollider meshCollider;
-
-    private LineRenderer myLR;
+    [HideInInspector] public LineRenderer myLR;
+    
     
     // Start is called before the first frame update
     void Start()
@@ -23,20 +22,9 @@ public class Line : MonoBehaviour
         myLR = GetComponent<LineRenderer>();
         myLR.material = linkMaterials[0];
         StartCoroutine(Reset(resetCollisionDetectionTime));
+        isLinkable = true;
     }
     
-    private void OnTriggerEnter(Collider other)
-    {
-        myLR.material = linkMaterials[1];
-        Debug.LogWarning("Collision avec un autre lien magique");
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        myLR.material = linkMaterials[0];
-        Debug.LogWarning("Sortie de collision avec un autre lien magique");
-    }
-
     IEnumerator Reset(float _resetTime)
     {
         myLR.Simplify(0.05f);
@@ -47,12 +35,7 @@ public class Line : MonoBehaviour
      
     private void GenerateMeshCollider()
     {
-        if (meshCollider == null)
-        {
-            meshCollider = gameObject.AddComponent<MeshCollider>();
-            meshCollider.convex = true;
-            meshCollider.isTrigger = true;
-        }
+        meshCollider ??= gameObject.AddComponent<MeshCollider>();
         
         Mesh mesh = new Mesh();
         myLR.BakeMesh(mesh, true);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -37,6 +38,8 @@ public class MagicLinesManager : MonoBehaviour
     public GameObject orthoCam;
     public GameObject perspCam;
 
+    public GameObject currentLineInDrawning;
+
 
     private void Start()
     {
@@ -61,39 +64,40 @@ public class MagicLinesManager : MonoBehaviour
     public void ToggleMagic()
     {
         isInMagicMode = !isInMagicMode;
-        Debug.Log(isInMagicMode);
         debugMode.text = $"Magic Mode : {isInMagicMode}";
 
         // Controls
-        if (isInMagicMode) OnEnableMagicMode();
-        else OnDisableMagicMode();
-
-        // Camera Pos & Rot
-        /*player.perspCam.transform.position = isInMagicMode ? magicModeCamPos : baseCamPos;
-        player.perspCam.transform.rotation = isInMagicMode ? Quaternion.Euler(90, 0, 0) : Quaternion.Euler(80, 0, 0);*/
-
+        if (isInMagicMode) EnableMagicMode();
+        else DisableMagicMode();
+        
         // Timescale 
         Time.timeScale = isInMagicMode ? .6f : 1;
         debugTimeScale.text = Time.timeScale.ToString();
     }
 
 
-    private void OnEnableMagicMode()
+    private void EnableMagicMode()
     {
+        // Inputs 
         InputService.OnPress += OnScreenTouch;
         InputService.OnRelease += OnScreenRelease;
         InputService.OnPress -= player.OnScreenTouch;
         InputService.OnRelease -= player.OnScreenRelease;
+        
+        // Camera
         perspCam.SetActive(false);
         orthoCam.SetActive(true);
     }
 
-    private void OnDisableMagicMode()
+    private void DisableMagicMode()
     {
+        // Inputs
         InputService.OnPress -= OnScreenTouch;
         InputService.OnRelease -= OnScreenRelease;
         InputService.OnPress += player.OnScreenTouch;
         InputService.OnRelease += player.OnScreenRelease;
+        
+        // Camera
         orthoCam.SetActive(false);
         perspCam.SetActive(true);
     }
@@ -138,6 +142,8 @@ public class MagicLinesManager : MonoBehaviour
 
     private void LinkMachines()
     {
+        if (!currentLineInDrawning.GetComponent<DrawMagicLine>().isLinkable) return;
+
         Debug.Log($"Les machines {m1} & {m2} sont link");
         currentMana -= 1;
         CreateMagicLine();
@@ -158,22 +164,7 @@ public class MagicLinesManager : MonoBehaviour
     {
         debugMana.text = $"Mana : {currentMana}/{maxMana}";
     }
-
-    private void CreateMagicLine()
-    {
-        var GO = Instantiate(linePrefab, Vector3.zero, Quaternion.identity);
-        LineRenderer lr = GO.GetComponent<LineRenderer>();
-        magicLinks.Add(lr);
-        points = new[] { m1.transform.position, m2.transform.position };
-        lr.positionCount = points.Length;
-        for (int i = 0; i < points.Length; i++)
-        {
-            lr.SetPosition(i, points[i] + Vector3.up);
-        }
-
-        GenerateMeshCollider(lr);
-    }
-
+    
     IEnumerator RecoverMana(float _timeToWait)
     {
         UpdateManaDebug();
@@ -186,20 +177,61 @@ public class MagicLinesManager : MonoBehaviour
 
     #region DrawLines&Mesh
 
-    private void GenerateMeshCollider(LineRenderer _lineRenderer)
+    private Vector3 p1;
+    private Vector3 p2;
+    private void CreateMagicLine()
     {
-        MeshCollider collider;
-        collider = _lineRenderer.gameObject.AddComponent<MeshCollider>();
+        var GO = Instantiate(linePrefab, Vector3.zero, Quaternion.identity);
+        LineRenderer lr = GO.GetComponent<LineRenderer>();
+        magicLinks.Add(lr);
 
-        Mesh mesh = new Mesh();
-        _lineRenderer.BakeMesh(mesh, true);
-        collider.sharedMesh = mesh;
-        _lineRenderer.gameObject.layer = LayerMask.NameToLayer("Link");
+        p1 = m1.transform.position + (m2.transform.position - m1.transform.position).normalized * 0.7f;
+        p2 = m2.transform.position + (m1.transform.position - m2.transform.position).normalized * 0.7f;
+        
+        Debug.DrawLine(new Vector3(p1.x, .5f, p1.z), new Vector3(p2.x, .5f, p2.z), Color.green, 20f);
+        var start = new Vector3(p1.x, .5f, p1.z);
+        var end = new Vector3(p2.x, .5f, p2.z);
+        
+        if (Physics.Raycast(
+                start, 
+                end - start, 
+                Vector3.Distance(start, end),
+                LayerMask.NameToLayer("Link")))
+        {
+            Debug.Log("Touche un autre lien au raycast");
+            Destroy(GO);
+            return;
+        }
+        
+        points = new[] { p1, p2 };
+        lr.positionCount = points.Length;
+        for (int i = 0; i < points.Length; i++)
+        {
+            lr.SetPosition(i, points[i] + Vector3.up);
+        }
+
+        GenerateLinkCollider(lr, p1, p2);
     }
+    
+    private void GenerateLinkCollider(LineRenderer _lineRenderer, Vector3 p1, Vector3 p2)
+    {
+        _lineRenderer.gameObject.transform.forward = (p2 - p1).normalized;
+        Mesh mesh = new Mesh();
+        
+        _lineRenderer.BakeMesh(mesh, true);
+        _lineRenderer.gameObject.layer = LayerMask.NameToLayer("Link");
+        _lineRenderer.gameObject.transform.position = (p1 + p2) / 2;
+        
+        BoxCollider collider;
+        collider = _lineRenderer.gameObject.AddComponent<BoxCollider>();
+        collider.center = new Vector3(0,1,0);
+        collider.size = new Vector3(.5f, .5f, Vector3.Distance(p2, p1));
+        collider.isTrigger = true;
+    }
+    
+    
 
     private Coroutine drawing;
-    private GameObject lineGO;
-
     // Update is called once per frame
     void Update()
     {
@@ -230,14 +262,15 @@ public class MagicLinesManager : MonoBehaviour
     {
         if (drawing == null) return;
         StopCoroutine(drawing);
-        Destroy(lineGO);
+        Destroy(currentLineInDrawning);
+        currentLineInDrawning = null;
     }
 
     IEnumerator DrawLine()
     {
-        lineGO = Instantiate(Resources.Load("Line") as GameObject,
+        currentLineInDrawning = Instantiate(Resources.Load("Line") as GameObject,
             new Vector3(0, 0, 0), Quaternion.identity);
-        LineRenderer line = lineGO.GetComponent<LineRenderer>();
+        LineRenderer line = currentLineInDrawning.GetComponent<LineRenderer>();
         line.positionCount = 0;
 
         while (true)
@@ -249,6 +282,6 @@ public class MagicLinesManager : MonoBehaviour
             yield return null;
         }
     }
-
+    
     #endregion
 }
