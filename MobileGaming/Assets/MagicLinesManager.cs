@@ -94,6 +94,8 @@ public class MagicLinesManager : MonoBehaviour
         // Camera
         orthoCam.SetActive(false);
         perspCam.SetActive(true);
+
+        if (currentLineInDrawning != null) Destroy(currentLineInDrawning);
     }
 
     #region Drag & Drop
