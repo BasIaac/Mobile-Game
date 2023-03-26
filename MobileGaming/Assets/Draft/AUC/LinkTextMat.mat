@@ -40,7 +40,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _FilingValue: 0
-    - _Tiling: 3
+    - _Tiling: 5
     m_Colors:
     - _LineColor: {r: 0.8584906, g: 0.14554498, b: 0.101237066, a: 0.78431374}
   m_BuildTextureStacks: []

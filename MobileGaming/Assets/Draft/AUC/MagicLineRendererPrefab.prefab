@@ -161,3 +161,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb5b6541ab06c9541a265ecdc4b8b135, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  machinesInLinks: []
+  myMaterial: {fileID: 2100000, guid: 17482694686d5a14685115a993555735, type: 2}
+  product:
+    data:
+      Color: 0
+      Shape: 0
+  itemProgression: 0
+  canRool: 0
+  timeToCompleteTransportation: 5
+  currentTimer: 0

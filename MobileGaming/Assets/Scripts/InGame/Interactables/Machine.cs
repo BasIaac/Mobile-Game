@@ -102,4 +102,9 @@ public abstract class Machine : MonoBehaviour
         if(feedbackObject == null) return;
         feedbackObject.SetActive(currentProduct != null);
     }
+
+    public bool IsProduct()
+    {
+        return currentProduct != null;
+    }
 }
