@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 #if UNITY_EDITOR
-using Unity.VisualScripting;
 using UnityEditor;
 #endif
 
 public class Level : MonoBehaviour
 {
-    private List<ClientTiming> clientTimings = new ();
+    [SerializeField] private List<ClientTiming> clientTimings = new ();
 
     [Header("Setup with tool automatically")]
     public List<Client> clients = new ();
@@ -67,16 +65,19 @@ public class Level : MonoBehaviour
 
     private void UpdateQueue()
     {
+        if (!queuedTimings.TryPeek(out nextTiming) || !availableClients.TryPeek(out availableClient)) return;
+        
         if(Time.time - startTime < nextTiming.time) return;
         
-        if(!queuedTimings.TryPeek(out nextTiming) || !availableClients.TryPeek(out availableClient)) return;
+        queuedTimings.Dequeue();
+        availableClients.Dequeue();
+        availableClient.SetData(nextTiming.data);
         
-        availableClients.Dequeue().SetData(queuedTimings.Dequeue().data);
-
-        nextTiming.time += (float)maxTime;
+        nextTiming.time += (float) maxTime;
         queuedTimings.Enqueue(nextTiming);
     }
     
+    #region Editor
 #if UNITY_EDITOR
     [CustomEditor(typeof(Level)),CanEditMultipleObjects]
     public class LevelEditor : Editor
@@ -174,6 +175,10 @@ public class Level : MonoBehaviour
             }
             EditorGUILayout.EndHorizontal();
 
+
+            base.OnInspectorGUI();
+            
+            return;
             var list = serializedObject.FindProperty("clients");
             EditorGUILayout.PropertyField(list);
             serializedObject.ApplyModifiedProperties();
@@ -199,6 +204,7 @@ public class Level : MonoBehaviour
         }
     }
 #endif
+    #endregion
 }
 
 [Serializable]
