@@ -3,10 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractWithLink : MonoBehaviour
+public class MachineLink : MonoBehaviour
 {
-    public DrawMagicLine lineInCollision;
+    #region Variables
+    private DrawMagicLine lineInCollision;
+    public List<Machine> machinesInLinks;
+    [Range(0,100)] public int itemProgression;
     
+    #endregion
+
+    #region Event Methods
+
     private void OnTriggerEnter(Collider other)
     {
         lineInCollision = other.GetComponent<DrawMagicLine>();
@@ -25,4 +32,11 @@ public class InteractWithLink : MonoBehaviour
         lineInCollision.isLinkable = true;
         lineInCollision = null;
     }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        Destroy(other.gameObject);
+    }
+
+    #endregion
 }

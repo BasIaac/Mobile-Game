@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class MagicLinesManager : MonoBehaviour
 {
+    #region Variables
+
     // Public or Visible 
     [SerializeField] private TextMeshProUGUI debugMode;
     [SerializeField] private TextMeshProUGUI debugTimeScale;
@@ -18,13 +20,10 @@ public class MagicLinesManager : MonoBehaviour
     [SerializeField] private int currentMana;
     [SerializeField] private int bonusMana;
     public float timeToRecoverMana = 4.5f;
-
-    [SerializeField] private Vector3 baseCamPos;
-    [SerializeField] private Vector3 magicModeCamPos;
-
+    
     public GameObject linePrefab;
     public Vector3[] points;
-    public List<LineRenderer> magicLinks;
+    public List<MachineLink> magicLinks;
 
     // Private
     private bool isPressed;
@@ -40,17 +39,14 @@ public class MagicLinesManager : MonoBehaviour
 
     public GameObject currentLineInDrawning;
 
-
+    #endregion
+    
     private void Start()
     {
         isInMagicMode = false;
         debugMode.text = $"Magic Mode : {isInMagicMode}";
         player = GetComponent<SorcererController>();
-
-        // Setup Cameras
-        baseCamPos = player.perspCam.transform.position;
-        magicModeCamPos = new Vector3(baseCamPos.x, baseCamPos.y, 0);
-
+        
         // Mana
         currentMana = maxMana + bonusMana;
         UpdateManaDebug();
@@ -59,7 +55,6 @@ public class MagicLinesManager : MonoBehaviour
         perspCam = GameObject.Find("Persp");
         orthoCam.SetActive(false);
     }
-
 
     public void ToggleMagic()
     {
@@ -74,8 +69,7 @@ public class MagicLinesManager : MonoBehaviour
         Time.timeScale = isInMagicMode ? .6f : 1;
         debugTimeScale.text = Time.timeScale.ToString();
     }
-
-
+    
     private void EnableMagicMode()
     {
         // Inputs 
@@ -138,8 +132,7 @@ public class MagicLinesManager : MonoBehaviour
     {
         isDraging = true;
     }
-
-
+    
     private void LinkMachines()
     {
         if (!currentLineInDrawning.GetComponent<DrawMagicLine>().isLinkable) return;
@@ -183,7 +176,12 @@ public class MagicLinesManager : MonoBehaviour
     {
         var GO = Instantiate(linePrefab, Vector3.zero, Quaternion.identity);
         LineRenderer lr = GO.GetComponent<LineRenderer>();
-        magicLinks.Add(lr);
+        
+        MachineLink machineLink = lr.GetComponent<MachineLink>();
+        magicLinks.Add(machineLink);
+        
+        machineLink.machinesInLinks.Add(m1);
+        machineLink.machinesInLinks.Add(m2);
 
         p1 = m1.transform.position + (m2.transform.position - m1.transform.position).normalized * 0.7f;
         p2 = m2.transform.position + (m1.transform.position - m2.transform.position).normalized * 0.7f;
@@ -213,24 +211,22 @@ public class MagicLinesManager : MonoBehaviour
         GenerateLinkCollider(lr, p1, p2);
     }
     
-    private void GenerateLinkCollider(LineRenderer _lineRenderer, Vector3 p1, Vector3 p2)
+    private void GenerateLinkCollider(LineRenderer lineRenderer, Vector3 p1, Vector3 p2)
     {
-        _lineRenderer.gameObject.transform.forward = (p2 - p1).normalized;
+        lineRenderer.gameObject.transform.forward = (p2 - p1).normalized;
         Mesh mesh = new Mesh();
         
-        _lineRenderer.BakeMesh(mesh, true);
-        _lineRenderer.gameObject.layer = LayerMask.NameToLayer("Link");
-        _lineRenderer.gameObject.transform.position = (p1 + p2) / 2;
+        lineRenderer.BakeMesh(mesh, true);
+        lineRenderer.gameObject.layer = LayerMask.NameToLayer("Link");
+        lineRenderer.gameObject.transform.position = (p1 + p2) / 2;
         
-        BoxCollider collider;
-        collider = _lineRenderer.gameObject.AddComponent<BoxCollider>();
-        collider.center = new Vector3(0,1,0);
-        collider.size = new Vector3(.5f, .5f, Vector3.Distance(p2, p1));
-        collider.isTrigger = true;
+        BoxCollider linkCollider;
+        linkCollider = lineRenderer.gameObject.AddComponent<BoxCollider>();
+        linkCollider.center = new Vector3(0,1,0);
+        linkCollider.size = new Vector3(.5f, .5f, Vector3.Distance(p2, p1));
+        linkCollider.isTrigger = true;
     }
     
-    
-
     private Coroutine drawing;
     // Update is called once per frame
     void Update()

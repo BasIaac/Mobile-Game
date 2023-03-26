@@ -150,4 +150,6 @@ MonoBehaviour:
   linkMaterials:
   - {fileID: 2100000, guid: 6ee787819be07fe4aa80b99a5e3745e7, type: 2}
   - {fileID: 2100000, guid: 8e39c19582935d646b1b28c5a1d20498, type: 2}
-  resetCollisionDetectionTime: 0.25
+  resetCollisionDetectionTime: 0.15
+  isLinkable: 0
+  myLR: {fileID: 0}
