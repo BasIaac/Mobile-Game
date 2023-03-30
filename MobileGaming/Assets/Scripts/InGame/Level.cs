@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -29,7 +30,15 @@ public class Level : MonoBehaviour
 
     private bool running;
 
+    private TextMeshProUGUI scoreText;
+    private TextMeshProUGUI timeText;
+
     private void Start()
+    {
+        Setup();
+    }
+
+    private void Setup()
     {
         OnEndLevel = null;
         
@@ -45,6 +54,15 @@ public class Level : MonoBehaviour
         SubscribeClients();
         
         startTime = Time.time;
+    }
+
+    public void Run()
+    {
+        Setup();
+        
+        UpdateTimeUI();
+        UpdateScoreUI();
+        
         running = true;
     }
 
@@ -75,6 +93,12 @@ public class Level : MonoBehaviour
         }
     }
 
+    public void SetUIComponents(TextMeshProUGUI newScoreText,TextMeshProUGUI newTimeText)
+    {
+        scoreText = newScoreText;
+        timeText = newTimeText;
+    }
+
     private void Update()
     {
         if(!running) return;
@@ -99,7 +123,15 @@ public class Level : MonoBehaviour
     private void IncreaseTime()
     {
         currentTime += Time.deltaTime;
+
+        UpdateTimeUI();
+        
         TryDefeat();
+    }
+
+    private void UpdateTimeUI()
+    {
+        timeText.text = $"Time Left : {(levelDuration - currentTime):f0}";
     }
 
     private void TryDefeat()
@@ -111,7 +143,15 @@ public class Level : MonoBehaviour
     private void IncreaseScore(int score)
     {
         currentScore += score;
+        
+        UpdateScoreUI();
+        
         TryVictory();
+    }
+
+    private void UpdateScoreUI()
+    {
+        scoreText.text = $"$$ : {currentScore}/{scoreToWin}";
     }
 
     private void TryVictory()
@@ -126,7 +166,7 @@ public class Level : MonoBehaviour
         OnEndLevel?.Invoke(state);
     }
 
-    public event Action<int> OnEndLevel; 
+    public event Action<int> OnEndLevel;
 
     #region Editor
 #if UNITY_EDITOR
