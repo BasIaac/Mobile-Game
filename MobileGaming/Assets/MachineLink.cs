@@ -1,4 +1,3 @@
-#nullable enable
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -13,7 +12,7 @@ public class MachineLink : MonoBehaviour
     public Material myMaterial;
     
     // Magic Transportation
-    public Product productInTreatment;
+    private Product productInTreatment;
     [Range(0,100)] public int itemProgression = 0;
     
     public float timeToCompleteTransportation = 10f;
@@ -24,20 +23,14 @@ public class MachineLink : MonoBehaviour
     private void Start()    
     {
         myMaterial = GetComponent<LineRenderer>().material;
+        productInTreatment = null;
     }
     
     private void Update()
     {
-        if (machinesInLinks[1].IsProduct()) return;
-
-        if (productInTreatment == null && machinesInLinks[0].IsProduct())
-        {
-            if (machinesInLinks[0].GetComponent<GenerationMachine>() != null)
-                TakeProductFromMachine(machinesInLinks[0].GetComponent<GenerationMachine>().newProduct);
-            
-            Debug.Log(productInTreatment.data.Color);
-            Debug.Log(productInTreatment.data.Shape);
-        }
+        if (machinesInLinks[1].currentProduct != null) return; //place dispo a destination
+        
+        if(productInTreatment == null) return; //place dispo sur moi
         
         currentTimer += Time.deltaTime;
         if (currentTimer > timeToCompleteTransportation)
@@ -49,9 +42,9 @@ public class MachineLink : MonoBehaviour
         Feedback();
     }
 
-    public void TakeProductFromMachine(Product _product)
+    public void TakeProductFromMachine()
     {
-        productInTreatment = _product;
+        machinesInLinks[0].UnloadProduct(out productInTreatment);
     }
     
     private void DeliverProductIntoMachine()

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -7,8 +8,17 @@ using UnityEditor;
 public class GenerationMachine : Machine
 {
     [HideInInspector] public Product newProduct;
-    public MachineLink outLink;
-    
+    [SerializeField] private float timeUntilRefresh = 2;
+    private float timer;
+
+    private void Update()
+    {
+        timer += Time.deltaTime;
+        if(timer < timeUntilRefresh) return;
+        timer = 0;
+        InvokeEndWork();
+    }
+
     public override void StartFeedback()
     {
         feedbackText.text = $"{newProduct}";

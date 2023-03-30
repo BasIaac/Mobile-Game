@@ -94,6 +94,8 @@ public class MagicLinesManager : MonoBehaviour
         orthoCam.SetActive(false);
         perspCam.SetActive(true);
 
+        if(drawing != null) StopCoroutine(drawing);
+        
         if (currentLineInDrawning != null) Destroy(currentLineInDrawning);
     }
 
@@ -182,7 +184,10 @@ public class MagicLinesManager : MonoBehaviour
         magicLinks.Add(machineLink);
         
         machineLink.machinesInLinks.Add(m1);
+        m1.OnEndWork += machineLink.TakeProductFromMachine; 
+        
         machineLink.machinesInLinks.Add(m2);
+
         m1.outputLink = machineLink;
 
         p1 = m1.transform.position + (m2.transform.position - m1.transform.position).normalized * 0.7f;

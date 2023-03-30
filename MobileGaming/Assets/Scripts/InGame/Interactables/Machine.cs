@@ -1,4 +1,4 @@
-#nullable enable
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -20,12 +20,9 @@ public abstract class Machine : MonoBehaviour
     
     protected double timer { get; private set; }
     protected double waitDuration { get; private set; }
-    protected Product currentProduct;
+    public Product currentProduct { get; protected set; } = null;
 
     public MachineLink outputLink;
-    
-    [Space(5.5f)]
-    UnityEvent m_MyEvent = new UnityEvent();
 
     private void Start()
     {
@@ -79,7 +76,7 @@ public abstract class Machine : MonoBehaviour
         
         EndWork();
     }
-    
+
     protected abstract void Work();
 
     private void EndWork()
@@ -88,9 +85,16 @@ public abstract class Machine : MonoBehaviour
         
         UpdateFeedbackObject();
 
-        m_MyEvent?.Invoke();
+        InvokeEndWork();
 
         workRoutine = null;
+    }
+    
+    public event Action OnEndWork;
+
+    protected void InvokeEndWork()
+    {
+        OnEndWork?.Invoke();
     }
 
     public virtual void UnloadProduct(out Product outProduct)
@@ -116,25 +120,9 @@ public abstract class Machine : MonoBehaviour
         feedbackObject.SetActive(currentProduct != null);
     }
 
-    public bool IsProduct()
-    {
-        return currentProduct != null;
-    }
-
-    private void DeliverProductFormLink()
-    {
-        if (outputLink == null) return;
-
-        UnloadProduct(out var outProduct);
-        outputLink.TakeProductFromMachine(outProduct);
-        currentProduct = null;
-        m_MyEvent.RemoveListener(DeliverProductFormLink);
-    }
-
     public void ReceiveProductFromLink(Product _product)
     {
         LoadProduct(_product);
-        m_MyEvent.AddListener(DeliverProductFormLink);
     }
 
 }
