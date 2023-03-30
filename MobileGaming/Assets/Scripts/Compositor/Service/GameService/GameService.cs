@@ -44,6 +44,8 @@ namespace Service
             Interactable.OnRangeExit += OnInteractableExit;
             
             UpdateProductText();
+            
+            level.Run();
         }
 
         private void LoadCameras(GameObject camerasGo)
@@ -87,7 +89,8 @@ namespace Service
                     endGameCanvasGo = sorcererController.endGameCanvasGo;
                     
                     sorcererController.endGameButton.onClick.AddListener(RestartGame);
-
+                    
+                    level.SetUIComponents(sorcererController.scoreText,sorcererController.timeLeftText);
                     level.OnEndLevel += UpdateEndGameText;
                     
                     LoadGame();
