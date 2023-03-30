@@ -28,5 +28,4 @@ public class MachineSlot : Interactable
         }
         machine.UnloadProduct(out outProduct);
     }
-
 }
