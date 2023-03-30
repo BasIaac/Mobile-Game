@@ -1,6 +1,8 @@
+#nullable enable
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public abstract class Machine : MonoBehaviour
@@ -15,10 +17,15 @@ public abstract class Machine : MonoBehaviour
     [SerializeField] private float timeMultiplier = 1f;
     
     private Coroutine workRoutine;
-
+    
     protected double timer { get; private set; }
     protected double waitDuration { get; private set; }
     protected Product currentProduct;
+
+    public MachineLink outputLink;
+    
+    [Space(5.5f)]
+    UnityEvent m_MyEvent = new UnityEvent();
 
     private void Start()
     {
@@ -29,7 +36,7 @@ public abstract class Machine : MonoBehaviour
 
     public abstract void StartFeedback();
 
-    public virtual void LoadProduct(Product inProduct,out Product outProduct)
+    public virtual void LoadProduct(Product inProduct, out Product outProduct)
     {
         outProduct = inProduct;
         if (workRoutine is not null) return;
@@ -80,7 +87,9 @@ public abstract class Machine : MonoBehaviour
         UpdateFeedbackText(0);
         
         UpdateFeedbackObject();
-        
+
+        m_MyEvent?.Invoke();
+
         workRoutine = null;
     }
 
@@ -95,13 +104,13 @@ public abstract class Machine : MonoBehaviour
         UpdateFeedbackObject();
     }
 
-    public void UpdateFeedbackText(double amount)
+    private void UpdateFeedbackText(double amount)
     {
-        if(feedbackImage is null) return;
+        if(feedbackImage == null) return;
         feedbackImage.fillAmount = (float)amount;
     }
 
-    public void UpdateFeedbackObject()
+    private void UpdateFeedbackObject()
     {
         if(feedbackObject == null) return;
         feedbackObject.SetActive(currentProduct != null);
@@ -111,4 +120,21 @@ public abstract class Machine : MonoBehaviour
     {
         return currentProduct != null;
     }
+
+    private void DeliverProductFormLink()
+    {
+        if (outputLink == null) return;
+
+        UnloadProduct(out var outProduct);
+        outputLink.TakeProductFromMachine(outProduct);
+        currentProduct = null;
+        m_MyEvent.RemoveListener(DeliverProductFormLink);
+    }
+
+    public void ReceiveProductFromLink(Product _product)
+    {
+        LoadProduct(_product);
+        m_MyEvent.AddListener(DeliverProductFormLink);
+    }
+
 }
