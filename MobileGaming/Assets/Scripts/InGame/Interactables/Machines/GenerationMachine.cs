@@ -7,7 +7,8 @@ using UnityEditor;
 public class GenerationMachine : Machine
 {
     [HideInInspector] public Product newProduct;
-
+    public MachineLink outLink;
+    
     public override void StartFeedback()
     {
         feedbackText.text = $"{newProduct}";

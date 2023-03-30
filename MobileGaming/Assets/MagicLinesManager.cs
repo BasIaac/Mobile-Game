@@ -183,6 +183,7 @@ public class MagicLinesManager : MonoBehaviour
         
         machineLink.machinesInLinks.Add(m1);
         machineLink.machinesInLinks.Add(m2);
+        m1.outputLink = machineLink;
 
         p1 = m1.transform.position + (m2.transform.position - m1.transform.position).normalized * 0.7f;
         p2 = m2.transform.position + (m1.transform.position - m2.transform.position).normalized * 0.7f;
