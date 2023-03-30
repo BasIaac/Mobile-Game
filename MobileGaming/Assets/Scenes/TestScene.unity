@@ -1679,7 +1679,7 @@ MonoBehaviour:
   baseTimeToProduce: 5
   timeMultiplier: 1
   changeColor: 1
-  targetColor: 0
+  targetColor: 2
   changeShape: 0
   targetShape: 0
 --- !u!1 &470150510 stripped
@@ -2360,6 +2360,7 @@ MonoBehaviour:
   increaseOnProduct: 0
   data:
     name: 
+    points: 0
     productDatas: []
 --- !u!1 &642153525 stripped
 GameObject:
@@ -3961,7 +3962,7 @@ MonoBehaviour:
   feedbackText: {fileID: 1933099955}
   baseTimeToProduce: 5
   timeMultiplier: 1
-  changeColor: 0
+  changeColor: 1
   targetColor: 1
   changeShape: 0
   targetShape: 2
@@ -6924,22 +6925,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a70c68433140d748bd40c37fb808550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelDuration: 120
+  scoreToWin: 1
   clientTimings:
   - time: 0
     data:
       name: Yov
+      points: 1
       productDatas:
       - Color: 1
         Shape: 1
   - time: 5
     data:
       name: Ju
+      points: 1
       productDatas:
       - Color: 3
         Shape: 1
   - time: 10
     data:
       name: Clem
+      points: 1
       productDatas:
       - Color: 3
         Shape: 0
@@ -7055,6 +7061,7 @@ MonoBehaviour:
   increaseOnProduct: 0
   data:
     name: 
+    points: 0
     productDatas: []
 --- !u!1 &1442553041 stripped
 GameObject:
@@ -7164,6 +7171,7 @@ MonoBehaviour:
   increaseOnProduct: 0
   data:
     name: test
+    points: 0
     productDatas: []
 --- !u!1 &1469533062 stripped
 GameObject:

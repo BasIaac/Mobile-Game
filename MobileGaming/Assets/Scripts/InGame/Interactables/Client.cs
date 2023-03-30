@@ -41,7 +41,6 @@ public class Client : MonoBehaviour
         
         NextProduct();
         return null;
-
     }
 
     private void NextProduct()
@@ -85,7 +84,7 @@ public class Client : MonoBehaviour
     {
         OnClientAvailable?.Invoke();
         
-        StopCoroutine(satisfactionRoutine);
+        if(satisfactionRoutine != null) StopCoroutine(satisfactionRoutine);
         satisfactionRoutine = null;
         currentSatisfaction = 0;
         UpdateFeedbackImage();
