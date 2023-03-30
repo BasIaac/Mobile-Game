@@ -14,7 +14,15 @@ public class WorkMachine : Machine
     public override void StartFeedback()
     {
         feedbackText.text = $"{(changeColor ? targetColor : string.Empty)}{(changeShape ? targetShape : string.Empty)}";
-    }               
+    }
+
+    public override bool IsValidInputProduct(Product product)
+    {
+        if (changeColor && changeShape && product.data.Color == targetColor && product.data.Shape == targetShape) return false;
+        if (changeColor && !changeShape && product.data.Color == targetColor) return false;
+        if (changeShape && !changeColor && product.data.Shape == targetShape) return false;
+        return true;
+    }
 
     protected override void Work()
     {

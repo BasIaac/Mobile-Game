@@ -34,6 +34,8 @@ public abstract class Machine : MonoBehaviour
         outProduct = inProduct;
         if (workRoutine is not null) return;
         
+        if (inProduct is not null) if(!IsValidInputProduct(inProduct)) return;
+        
         UnloadProduct(out outProduct);
         
         if (inProduct is not null)
@@ -41,7 +43,9 @@ public abstract class Machine : MonoBehaviour
             LoadProduct(inProduct);
         }
     }
-    
+
+    public abstract bool IsValidInputProduct(Product product);
+
 
     public virtual void LoadProduct(Product product)
     {
