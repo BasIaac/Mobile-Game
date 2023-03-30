@@ -61,7 +61,7 @@ public class Client : MonoBehaviour
             
             if (currentDataIndex >= data.productDatas.Length)
             {
-                IncreasePoints();
+                InvokeEndEvents();
                 StopClient();
                 yield break;
             }
@@ -91,10 +91,12 @@ public class Client : MonoBehaviour
         UpdateFeedbackImage();
     }
 
-    private void IncreasePoints()
+    private void InvokeEndEvents()
     {
-        //TODO - Increase Points
+        OnEnd?.Invoke(data.points);
     }
+
+    public event Action<int> OnEnd; 
 
     public void SetData(ClientData newData)
     {
@@ -125,7 +127,10 @@ public class Client : MonoBehaviour
             
             EditorGUILayout.LabelField("Product Settings",EditorStyles.boldLabel);
             
+            EditorGUILayout.BeginHorizontal();
             client.data.name = EditorGUILayout.TextField("Client Name",client.data.name);
+            client.data.points = EditorGUILayout.IntField("Points",client.data.points);
+            EditorGUILayout.EndHorizontal();
             
             productDataCount = EditorGUILayout.IntField("Product Count", productDataCount);
 
@@ -174,5 +179,6 @@ public class Client : MonoBehaviour
 public struct ClientData
 {
     public string name;
+    public int points;
     public ProductData[] productDatas;
 }
