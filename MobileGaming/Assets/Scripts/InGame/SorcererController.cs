@@ -1,11 +1,13 @@
 using System;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 public class SorcererController : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private GameObject sorcererGo;
+    [SerializeField] private MeshRenderer[] meshes;
 
     public GameObject perspCameraGo;
     public Camera orthoCam;
@@ -34,11 +36,20 @@ public class SorcererController : MonoBehaviour
     {
        InputService.OnPress += OnScreenTouch;
        InputService.OnRelease += OnScreenRelease;
+
+       if (!isNavMeshControlled) return;
+       
+       agent.speed = int.MaxValue;
+       agent.acceleration = int.MaxValue;
+       foreach (var mesh in meshes)
+       {
+           mesh.enabled = false;
+       }
     }
 
     private void Update()
     {
-        //AgentMovement();
+        AgentMovement();
     }
 
     private void AgentMovement()
@@ -59,7 +70,9 @@ public class SorcererController : MonoBehaviour
         rb = sorcererGo.GetComponent<Rigidbody>();
         joystickParentGo = joystickParentTr.gameObject;
         joystickParentGo.SetActive(false);
-
+        
+        Debug.Log(isNavMeshControlled);
+        
         OnInteract = null;
     }
 
@@ -101,6 +114,7 @@ public class SorcererController : MonoBehaviour
     private void MoveToPosition(Vector2 screenPosition)
     {
         ray = cam.ScreenPointToRay(screenPosition);
+        Debug.DrawRay(ray.origin,ray.direction*rayLenght);
         if (Physics.Raycast(ray.origin,ray.direction, out hit,rayLenght,layersToHit))
         {
             agent.isStopped = false;
