@@ -6931,7 +6931,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelDuration: 120
-  scoreToWin: 1
+  scoreToWin: 10
   clientTimings:
   - time: 0
     data:

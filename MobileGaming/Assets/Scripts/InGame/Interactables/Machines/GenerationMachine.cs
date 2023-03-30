@@ -13,6 +13,11 @@ public class GenerationMachine : Machine
         feedbackText.text = $"{newProduct}";
     }
 
+    public override bool IsValidInputProduct(Product product)
+    {
+        return true;
+    }
+
     protected override void Work()
     {
         
