@@ -8,6 +8,12 @@ using UnityEditor;
 
 public class Level : MonoBehaviour
 {
+    [SerializeField] private float levelDuration;
+    private float currentTime;
+    
+    [SerializeField] private int scoreToWin;
+    private int currentScore;
+    
     [SerializeField] private List<ClientTiming> clientTimings = new ();
 
     [Header("Setup with tool automatically")]
@@ -25,6 +31,9 @@ public class Level : MonoBehaviour
     {
         queuedTimings.Clear();
         availableClients.Clear();
+
+        currentTime = 0;
+        currentScore = 0;
         
         SetupQueue();
         
@@ -49,6 +58,8 @@ public class Level : MonoBehaviour
         foreach (var client in clients)
         {
             client.OnClientAvailable += UpdateAvailableClient;
+            client.OnEnd += IncreaseScore;
+            
             UpdateAvailableClient();
             
             void UpdateAvailableClient()
@@ -61,6 +72,7 @@ public class Level : MonoBehaviour
     private void Update()
     {
         UpdateQueue();
+        IncreaseTime();
     }
 
     private void UpdateQueue()
@@ -75,6 +87,30 @@ public class Level : MonoBehaviour
         
         nextTiming.time += (float) maxTime;
         queuedTimings.Enqueue(nextTiming);
+    }
+
+    private void IncreaseTime()
+    {
+        currentTime += Time.deltaTime;
+        TryDefeat();
+    }
+
+    private void TryDefeat()
+    {
+        if(currentTime < levelDuration) return;
+        
+    }
+
+    private void IncreaseScore(int score)
+    {
+        currentScore += score;
+        TryVictory();
+    }
+
+    private void TryVictory()
+    {
+        if(currentScore < scoreToWin) return;
+        
     }
     
     #region Editor
@@ -93,9 +129,17 @@ public class Level : MonoBehaviour
             EditorGUI.EndDisabledGroup();
             
             var level = (Level)target;
-            
+
             EditorGUILayout.LabelField("Level Settings",EditorStyles.boldLabel);
-            
+
+            level.levelDuration = EditorGUILayout.FloatField("Level Duration", level.levelDuration);
+            GUI.enabled = false;
+            level.currentTime = EditorGUILayout.FloatField("Current Duration", level.currentTime);
+            GUI.enabled = true;
+            level.scoreToWin = EditorGUILayout.IntField("Score to Win", level.scoreToWin);
+            GUI.enabled = false;
+            level.currentScore = EditorGUILayout.IntField("Current Score", level.currentScore);
+            GUI.enabled = true;
             clientTimingCount = EditorGUILayout.IntField("Client Count", level.clientTimings.Count);
 
             if (clientTimingCount != level.clientTimings.Count)
@@ -123,7 +167,12 @@ public class Level : MonoBehaviour
                 EditorGUILayout.LabelField("Client Settings", EditorStyles.boldLabel);
 
                 timing.time = EditorGUILayout.FloatField("Client Time", timing.time);
-                timing.data.name = EditorGUILayout.TextField("Client Name", timing.data.name);
+                
+                EditorGUILayout.BeginHorizontal();
+                timing.data.name = EditorGUILayout.TextField("Client Name",timing.data.name);
+                EditorGUILayout.LabelField("Points",GUILayout.Width(51));
+                timing.data.points = EditorGUILayout.IntField(timing.data.points);
+                EditorGUILayout.EndHorizontal();
                 
                 EditorGUILayout.BeginHorizontal();
                 clientDataCount[timingIndex] = EditorGUILayout.IntField("Product Count", clientDataCount[timingIndex]);
@@ -179,10 +228,7 @@ public class Level : MonoBehaviour
             base.OnInspectorGUI();
             
             return;
-            var list = serializedObject.FindProperty("clients");
-            EditorGUILayout.PropertyField(list);
-            serializedObject.ApplyModifiedProperties();
-            
+
             void AddClientTiming()
             {
                 level.clientTimings.Add(new ClientTiming()
