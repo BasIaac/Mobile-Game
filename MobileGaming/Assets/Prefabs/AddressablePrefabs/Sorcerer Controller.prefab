@@ -496,13 +496,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sorcererGo: {fileID: 5238849128981398589}
+  meshes:
+  - {fileID: 5238849128981398595}
+  - {fileID: 7272315380588074322}
   perspCameraGo: {fileID: 0}
   orthoCam: {fileID: 0}
   perspCam: {fileID: 0}
   joystickParentTr: {fileID: 0}
   joystickTr: {fileID: 0}
   joystickParentGo: {fileID: 0}
-  isNavMeshControlled: 0
+  isNavMeshControlled: 1
   layersToHit:
     serializedVersion: 2
     m_Bits: 256
@@ -531,8 +534,6 @@ MonoBehaviour:
   currentMana: 0
   bonusMana: 0
   timeToRecoverMana: 5
-  baseCamPos: {x: 0, y: 0, z: 0}
-  magicModeCamPos: {x: 0, y: 0, z: 0}
   linePrefab: {fileID: 1722924855489795753, guid: 97fb3b5f6dc24ed419b3fc518cd4f3b3,
     type: 3}
   points:
