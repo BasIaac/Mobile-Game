@@ -1,6 +1,7 @@
 using Addressables;
 using Addressables.Components;
 using Attributes;
+using TMPro;
 using UnityEngine;
 using static UnityEngine.AddressableAssets.Addressables;
 
@@ -13,10 +14,15 @@ namespace Service
 
         private SorcererController sorcererController;
         private MachineManager machineManager;
+        private Level level;
         
         private Product currentProduct; // TODO - multiple products (product slot class list)
         
         private Interactable currentInteractable;
+
+        private GameObject endGameCanvasGo;
+        private TextMeshProUGUI currentProductText;
+        private TextMeshProUGUI endGameText;
 
         [ServiceInit]
         public void InitGame()
@@ -36,6 +42,8 @@ namespace Service
             Interactable.ResetEvents();
             Interactable.OnRangeEnter += OnInteractableEnter;
             Interactable.OnRangeExit += OnInteractableExit;
+            
+            UpdateProductText();
         }
 
         private void LoadCameras(GameObject camerasGo)
@@ -72,6 +80,15 @@ namespace Service
                     sorcererController.OnInteract += InteractWithInteractable;
 
                     machineManager = Object.FindObjectOfType<MachineManager>(); // TODO - load it before, with the level layout
+                    level = Object.FindObjectOfType<Level>(); // TODO - load it before, with the level layout
+
+                    currentProductText = sorcererController.currentProductText;
+                    endGameText = sorcererController.endGameText;
+                    endGameCanvasGo = sorcererController.endGameCanvasGo;
+                    
+                    sorcererController.endGameButton.onClick.AddListener(RestartGame);
+
+                    level.OnEndLevel += UpdateEndGameText;
                     
                     LoadGame();
                 }
@@ -82,9 +99,15 @@ namespace Service
         {
             if(currentInteractable is null) return;
             
-            Debug.Log($"Interacting, product is {currentProduct}");
+            //Debug.Log($"Interacting, product is {currentProduct}");
             currentInteractable.Interact(currentProduct,out currentProduct);
-            Debug.Log($"Interacted, product is now {currentProduct}");
+            //Debug.Log($"Interacted, product is now {currentProduct}");
+            UpdateProductText();
+        }
+
+        private void UpdateProductText()
+        {
+            currentProductText.text = $"Current :\n{currentProduct}";
         }
 
         private void OnInteractableEnter(Interactable interactable)
@@ -95,6 +118,17 @@ namespace Service
         private void OnInteractableExit(Interactable interactable)
         {
             if (currentInteractable == interactable) currentInteractable = null;
+        }
+
+        private void UpdateEndGameText(int state)
+        {
+            endGameText.text = state == 0 ? "lose :c" : "win :)";
+            endGameCanvasGo.SetActive(true);
+        }
+
+        private void RestartGame()
+        {
+            sceneService.LoadScene(0);
         }
     }
 }

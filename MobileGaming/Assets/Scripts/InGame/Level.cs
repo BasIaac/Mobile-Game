@@ -8,10 +8,10 @@ using UnityEditor;
 
 public class Level : MonoBehaviour
 {
-    [SerializeField] private float levelDuration;
+    [HideInInspector,SerializeField] private float levelDuration;
     private float currentTime;
     
-    [SerializeField] private int scoreToWin;
+    [HideInInspector,SerializeField] private int scoreToWin;
     private int currentScore;
     
     [SerializeField] private List<ClientTiming> clientTimings = new ();
@@ -27,19 +27,25 @@ public class Level : MonoBehaviour
     private double startTime;
     private double maxTime = 0;
 
+    private bool running;
+
     private void Start()
     {
+        OnEndLevel = null;
+        
         queuedTimings.Clear();
         availableClients.Clear();
 
         currentTime = 0;
         currentScore = 0;
+        running = false;
         
         SetupQueue();
         
         SubscribeClients();
         
         startTime = Time.time;
+        running = true;
     }
 
     private void SetupQueue()
@@ -71,6 +77,7 @@ public class Level : MonoBehaviour
 
     private void Update()
     {
+        if(!running) return;
         UpdateQueue();
         IncreaseTime();
     }
@@ -98,7 +105,7 @@ public class Level : MonoBehaviour
     private void TryDefeat()
     {
         if(currentTime < levelDuration) return;
-        
+        EndLevel(0);
     }
 
     private void IncreaseScore(int score)
@@ -110,9 +117,17 @@ public class Level : MonoBehaviour
     private void TryVictory()
     {
         if(currentScore < scoreToWin) return;
-        
+        EndLevel(1);
     }
-    
+
+    private void EndLevel(int state)
+    {
+        running = false;
+        OnEndLevel?.Invoke(state);
+    }
+
+    public event Action<int> OnEndLevel; 
+
     #region Editor
 #if UNITY_EDITOR
     [CustomEditor(typeof(Level)),CanEditMultipleObjects]
@@ -134,11 +149,11 @@ public class Level : MonoBehaviour
 
             level.levelDuration = EditorGUILayout.FloatField("Level Duration", level.levelDuration);
             GUI.enabled = false;
-            level.currentTime = EditorGUILayout.FloatField("Current Duration", level.currentTime);
+            EditorGUILayout.FloatField("Current Duration", level.currentTime);
             GUI.enabled = true;
             level.scoreToWin = EditorGUILayout.IntField("Score to Win", level.scoreToWin);
             GUI.enabled = false;
-            level.currentScore = EditorGUILayout.IntField("Current Score", level.currentScore);
+            EditorGUILayout.IntField("Current Score", level.currentScore);
             GUI.enabled = true;
             clientTimingCount = EditorGUILayout.IntField("Client Count", level.clientTimings.Count);
 
@@ -152,6 +167,7 @@ public class Level : MonoBehaviour
 
             if (clientDataCount.Length != level.clientTimings.Count)
             {
+                EditorUtility.SetDirty(target);
                 clientDataCount = new int[level.clientTimings.Count];
                 for (int i = 0; i < level.clientTimings.Count; i++)
                 {
@@ -171,7 +187,7 @@ public class Level : MonoBehaviour
                 EditorGUILayout.BeginHorizontal();
                 timing.data.name = EditorGUILayout.TextField("Client Name",timing.data.name);
                 EditorGUILayout.LabelField("Points",GUILayout.Width(51));
-                timing.data.points = EditorGUILayout.IntField(timing.data.points);
+                timing.data.points = EditorGUILayout.IntField(timing.data.points,GUILayout.Width(150));
                 EditorGUILayout.EndHorizontal();
                 
                 EditorGUILayout.BeginHorizontal();
@@ -190,6 +206,7 @@ public class Level : MonoBehaviour
                 var currentLenght = level.clientTimings[timingIndex].data.productDatas.Length;
                 if (currentLenght != clientDataCount[timingIndex])
                 {
+                    EditorUtility.SetDirty(target);
                     var data = new ProductData[clientDataCount[timingIndex]];
                 
                     for (int i = 0; i < (currentLenght < clientDataCount[timingIndex] ? currentLenght : clientDataCount[timingIndex]); i++)
@@ -223,7 +240,7 @@ public class Level : MonoBehaviour
                 RemoveClientTiming();
             }
             EditorGUILayout.EndHorizontal();
-
+            
 
             base.OnInspectorGUI();
             
