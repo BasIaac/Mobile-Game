@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public abstract class Machine : MonoBehaviour
@@ -15,10 +17,12 @@ public abstract class Machine : MonoBehaviour
     [SerializeField] private float timeMultiplier = 1f;
     
     private Coroutine workRoutine;
-
+    
     protected double timer { get; private set; }
     protected double waitDuration { get; private set; }
-    protected Product currentProduct;
+    public Product currentProduct { get; protected set; } = null;
+
+    public MachineLink outputLink;
 
     private void Start()
     {
@@ -29,10 +33,12 @@ public abstract class Machine : MonoBehaviour
 
     public abstract void StartFeedback();
 
-    public virtual void LoadProduct(Product inProduct,out Product outProduct)
+    public virtual void LoadProduct(Product inProduct, out Product outProduct)
     {
         outProduct = inProduct;
         if (workRoutine is not null) return;
+        
+        if (inProduct is not null) if(!IsValidInputProduct(inProduct)) return;
         
         UnloadProduct(out outProduct);
         
@@ -41,7 +47,9 @@ public abstract class Machine : MonoBehaviour
             LoadProduct(inProduct);
         }
     }
-    
+
+    public abstract bool IsValidInputProduct(Product product);
+
 
     public virtual void LoadProduct(Product product)
     {
@@ -68,7 +76,7 @@ public abstract class Machine : MonoBehaviour
         
         EndWork();
     }
-    
+
     protected abstract void Work();
 
     private void EndWork()
@@ -76,8 +84,17 @@ public abstract class Machine : MonoBehaviour
         UpdateFeedbackText(0);
         
         UpdateFeedbackObject();
-        
+
+        InvokeEndWork();
+
         workRoutine = null;
+    }
+    
+    public event Action OnEndWork;
+
+    protected void InvokeEndWork()
+    {
+        OnEndWork?.Invoke();
     }
 
     public virtual void UnloadProduct(out Product outProduct)
@@ -91,15 +108,21 @@ public abstract class Machine : MonoBehaviour
         UpdateFeedbackObject();
     }
 
-    public void UpdateFeedbackText(double amount)
+    private void UpdateFeedbackText(double amount)
     {
-        if(feedbackImage is null) return;
+        if(feedbackImage == null) return;
         feedbackImage.fillAmount = (float)amount;
     }
 
-    public void UpdateFeedbackObject()
+    private void UpdateFeedbackObject()
     {
         if(feedbackObject == null) return;
         feedbackObject.SetActive(currentProduct != null);
     }
+
+    public void ReceiveProductFromLink(Product _product)
+    {
+        LoadProduct(_product);
+    }
+
 }

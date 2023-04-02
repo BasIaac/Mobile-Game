@@ -1,12 +1,23 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class SorcererController : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private GameObject sorcererGo;
+    [SerializeField] private MeshRenderer[] meshes;
+    
+    [field:SerializeField,Header("Components")] public TextMeshProUGUI currentProductText { get; private set; }
+    [field:SerializeField] public TextMeshProUGUI timeLeftText { get; private set; }
+    [field:SerializeField] public TextMeshProUGUI scoreText { get; private set; }
+    [field:SerializeField] public TextMeshProUGUI endGameText { get; private set; }
+    [field:SerializeField,] public Button endGameButton { get; private set; }
+    [field:SerializeField,] public GameObject endGameCanvasGo { get; private set; }
 
+    [Header("Cameras")]
     public GameObject perspCameraGo;
     public Camera orthoCam;
     public Camera perspCam;
@@ -32,13 +43,24 @@ public class SorcererController : MonoBehaviour
     
     private void Start()
     {
-       InputService.OnPress += OnScreenTouch;
-       InputService.OnRelease += OnScreenRelease;
+        endGameCanvasGo.SetActive(false);
+
+        InputService.OnPress += OnScreenTouch;
+        InputService.OnRelease += OnScreenRelease;
+
+        if (!isNavMeshControlled) return;
+       
+        agent.speed = int.MaxValue;
+        agent.acceleration = int.MaxValue;
+        foreach (var mesh in meshes)
+        {
+            mesh.enabled = false;
+        }
     }
 
     private void Update()
     {
-        //AgentMovement();
+        AgentMovement();
     }
 
     private void AgentMovement()
@@ -59,7 +81,7 @@ public class SorcererController : MonoBehaviour
         rb = sorcererGo.GetComponent<Rigidbody>();
         joystickParentGo = joystickParentTr.gameObject;
         joystickParentGo.SetActive(false);
-
+        
         OnInteract = null;
     }
 
@@ -101,6 +123,7 @@ public class SorcererController : MonoBehaviour
     private void MoveToPosition(Vector2 screenPosition)
     {
         ray = cam.ScreenPointToRay(screenPosition);
+        Debug.DrawRay(ray.origin,ray.direction*rayLenght);
         if (Physics.Raycast(ray.origin,ray.direction, out hit,rayLenght,layersToHit))
         {
             agent.isStopped = false;
